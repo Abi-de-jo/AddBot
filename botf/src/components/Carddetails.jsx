@@ -1,0 +1,264 @@
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import axios from 'axios';
+
+const API_BASE_URL = "http://localhost:3000/api"; // Replace with your backend base URL
+
+const CardDetails = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedCard, setEditedCard] = useState(location.state?.card || {});
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      await axios.put(`${API_BASE_URL}/residency/update/${editedCard.id}`, editedCard);
+      setIsEditing(false);
+      alert('Property updated successfully!');
+    } catch (error) {
+      console.error('Error updating property:', error);
+      alert('Failed to update property. Please try again.');
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this property?')) {
+      try {
+        await axios.delete(`${API_BASE_URL}/residency/delete/${editedCard.id}`);
+        alert('Property deleted successfully!');
+        navigate(-1);
+      } catch (error) {
+        console.error('Error deleting property:', error);
+        alert('Failed to delete property. Please try again.');
+      }
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedCard({ ...editedCard, [name]: value });
+  };
+
+  if (!editedCard) {
+    return (
+      <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white">
+        <h2 className="text-xl font-bold mb-4">No Card Selected</h2>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
+          onClick={handleBack}
+        >
+          Back
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white space-y-4">
+      {/* Image Carousel */}
+      <div className="relative w-full h-64 bg-gray-200 rounded-md overflow-hidden">
+        {editedCard.images && editedCard.images.length > 0 ? (
+          <div className="flex overflow-x-auto snap-x space-x-2">
+            {editedCard.images.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Property ${index + 1}`}
+                className="w-full h-64 object-cover snap-center rounded-md"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'https://via.placeholder.com/300x300?text=No+Image';
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-400 text-center">No Images Available</p>
+        )}
+      </div>
+
+      {/* Property Details */}
+      {isEditing ? (
+        <div className="space-y-2">
+          <input
+            type="text"
+            name="title"
+            value={editedCard.title || ''}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            placeholder="Property Title"
+          />
+          <input
+            type="text"
+            name="address"
+            value={editedCard.address || ''}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            placeholder="Address"
+          />
+          <input
+            type="text"
+            name="type"
+            value={editedCard.type || ''}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            placeholder="Property Type"
+          />
+          <input
+            type="text"
+            name="term"
+            value={editedCard.term || ''}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            placeholder="Term"
+          />
+          <input
+            type="text"
+            name="termDuration"
+            value={editedCard.termDuration || ''}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            placeholder="Term Duration"
+          />
+          <input
+            type="text"
+            name="price"
+            value={editedCard.price || ''}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            placeholder="Price"
+          />
+        </div>
+      ) : (
+        <>
+          <h2 className="text-xl font-bold">{editedCard.title || 'Untitled Property'}</h2>
+          <p className="text-sm text-gray-600">{editedCard.address || 'Location not provided'}</p>
+          <p className="text-sm text-blue-500">{editedCard?.type}</p>
+          <p className="text-sm text-blue-500">{editedCard?.term} {editedCard?.termDuration}</p>
+          <p className="text-lg font-semibold">Price: <span className='text-yellow-500'>{editedCard.price || 'N/A'}</span></p>
+        </>
+      )}
+
+      {/* Amenities */}
+      <div>
+        <h3 className="font-semibold">Amenities</h3>
+        <ul className="list-disc ml-6">
+          {editedCard.amenities && editedCard.amenities.length > 0 ? (
+            editedCard.amenities.map((item, index) => (
+              <li key={index} className="text-sm">{item}</li>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">No amenities listed</p>
+          )}
+        </ul>
+      </div>
+
+      {/* Heating */}
+      <div>
+        <h3 className="font-semibold">Heating</h3>
+        <ul className="list-disc ml-6">
+          {editedCard.heating && editedCard.heating.length > 0 ? (
+            editedCard.heating.map((item, index) => (
+              <li key={index} className="text-sm">{item}</li>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">No heating information</p>
+          )}
+        </ul>
+      </div>
+
+      {/* Additional Features */}
+      <div>
+        <h3 className="font-semibold">Additional Features</h3>
+        <p className="text-sm">{editedCard.payment || 'N/A'}</p>
+      </div>
+
+      {/* Buttons */}
+      <div className="p-4 flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          {isEditing ? (
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600"
+              onClick={handleSave}
+            >
+              Save
+            </button>
+          ) : (
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
+              onClick={handleEdit}
+            >
+              Edit
+            </button>
+          )}
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600"
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        </div>
+        <div className="flex items-center space-x-4">
+          <button
+            className="p-2 rounded-md shadow hover:bg-gray-100"
+            onClick={toggleFavorite}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill={isFavorite ? 'red' : 'none'}
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+            </svg>
+          </button>
+          <button
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-400"
+            onClick={handleBack}
+          >
+            Back
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+CardDetails.propTypes = {
+  card: PropTypes.shape({
+    id: PropTypes.string,
+    title: PropTypes.string,
+    address: PropTypes.string,
+    price: PropTypes.string,
+    type: PropTypes.string,
+    term: PropTypes.string,
+    termDuration: PropTypes.string,
+    images: PropTypes.arrayOf(PropTypes.string),
+    amenities: PropTypes.arrayOf(PropTypes.string),
+    heating: PropTypes.arrayOf(PropTypes.string),
+    payment: PropTypes.string,
+  }),
+};
+
+export default CardDetails;
+
