@@ -12,7 +12,7 @@ const App = () => {
   const telegram = window.Telegram.WebApp;
   useEffect(()=>{
 
-    telegram.ready()
+    telegram.ready();
   })
   return (
     <BrowserRouter>
