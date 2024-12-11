@@ -1,8 +1,7 @@
 import  { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-// import axios from "axios"
-const SecondComponent = ({setStep}) => {
+ const SecondComponent = ({setStep}) => {
   const [secondFormData, setSecondFormData] = useState({
     ...JSON.parse(localStorage.getItem("form1")), // Spread data from form1 directly
     dealType: 'Rental',

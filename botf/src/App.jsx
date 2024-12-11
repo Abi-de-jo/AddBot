@@ -4,8 +4,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import LoginForm from './components/LoginForm';
 import FirstComponent from './components/FirstComponent';
 import SecondComponent from './components/SecondComponent';
-import CardDetails from './components/CardDetails';
-
+import CardDetails from './components/Carddetails';
+ 
 const App = () => {
   const [step, setStep] = useState(0);
   const queryClient = new QueryClient();
