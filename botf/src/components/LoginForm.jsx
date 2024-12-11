@@ -10,7 +10,7 @@ const LoginForm = ({setStep}) => {
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
      try {
-      const response = await axios.post(`http://localhost:3000/api/user/register`, {
+      const response = await axios.post(`https://add-bot-server.vercel.app/api/user/register`, {
         email,
         password,
       });

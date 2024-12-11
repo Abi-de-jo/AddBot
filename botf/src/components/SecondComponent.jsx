@@ -49,7 +49,7 @@ import axios from 'axios';
     
     try {
       // Step 1: Send form data to your backend
-      const res = await axios.post("http://localhost:3000/api/residency/create", {
+      const res = await axios.post("https://add-bot-server.vercel.app/api/residency/create", {
         email,
         secondFormData,
       });

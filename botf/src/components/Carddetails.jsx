@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-const API_BASE_URL = "http://localhost:3000/api"; // Replace with your backend base URL
+const API_BASE_URL = "https://add-bot-server.vercel.app/api"; // Replace with your backend base URL
 
 const CardDetails = () => {
   const location = useLocation();
