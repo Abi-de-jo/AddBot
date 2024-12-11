@@ -454,15 +454,21 @@ const handleImageUpload = (e) => {
   <label className="block text-sm font-medium mb-2">district Options</label>
   <div className="flex flex-wrap gap-4">
     {[
-      'District 1',
-      'District 2',
-      'District 3',
-      'District 4',
-      'District 5',
-      'District 6',
-      'District 7',
-      'District 8',
-      'District 9',
+      "Varkateli",
+      "Samgori" ,
+      "Isani" ,
+      "Avlabari", 
+      "Sololaki",
+      'Chugureti',
+      "Vera",
+      "Mtatsminda",
+      "Vake",
+      "Saburtalo",
+      "Nadzaladevi",
+      "Sanzona", 
+      "Dighomi",
+     " Didi dighomi",
+      "Gldani",
       'Others',
     ].map((option, index) => (
       <div key={index} className="flex items-center gap-2">
