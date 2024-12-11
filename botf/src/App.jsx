@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import LoginForm from './components/LoginForm';
@@ -9,7 +9,11 @@ import CardDetails from './components/Carddetails';
 const App = () => {
   const [step, setStep] = useState(0);
   const queryClient = new QueryClient();
+  const telegram = window.Telegram.WebApp;
+  useEffect(()=>{
 
+    telegram.ready()
+  })
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
