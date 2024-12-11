@@ -100,7 +100,7 @@ const FirstComponent = ({ setStep }) => {
             htmlFor="Fulladdress"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Search by address
+            Enter address
           </label>
           <div className="relative">
             <div className="flex gap-2">
