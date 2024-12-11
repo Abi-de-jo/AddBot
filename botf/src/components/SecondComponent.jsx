@@ -44,101 +44,163 @@ import axios from 'axios';
       ],      
   });
 
-  const TELEGRAM_BOT_TOKEN = '7712916176:AAF15UqOplv1hTdJVxILWoUOEefEKjGJOso';
-  const TELEGRAM_CHAT_ID = '1469627446'; // Replace with a valid chat ID or channel username (e.g., @your_channel_name)
-const handlePublish = async () => {
-
-  const email = localStorage.getItem("email")
-  try {
-    const res = await axios.post("http://localhost:3000/api/residency/create",
-      {
-        email,
-        secondFormData
-       },
+  const handlePublish = async () => {
+    const email = localStorage.getItem("email");
     
-    );
-    console.log(res)
-  } catch (error) {
-
-    console.log(error)
-    throw error;
-  }
-  
-
-
-  console.log(secondFormData,"abisheik")
-   try {
-    // Prepare message content with emojis and markdown
-    const message = `
-📍 **#${secondFormData.address}**
-📍 **#${secondFormData.Fulladdress}**
-
-❗️**#Discount**
-
-For **#Rent** in **#Tbilisi #Commercial**  
-Design **#Smashed**
-
-📍 **#Rustaveli** - '18 min 🚶'
-📍 **Mcheta street 3**
-
-📣 **For Rent Commercial space / Retail near 🚇 #Rustaveli**
-
-🏠 **Good #OldBuilding**  
-🏠 **#1Floor**  
-📏 **${secondFormData.size} sq.m**  
-🚻 **Bathroom available**
-💵 **Price: ${secondFormData.price} ${secondFormData.currency}**
-`;
-
-    // Send text message to Telegram
-    await axios.post(
-      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
-      {
-        chat_id: TELEGRAM_CHAT_ID,
-        text: message,
-        parse_mode: 'Markdown',
-      }
-    );
-
-    // Upload images to Telegram and collect file IDs
-    const uploadedimages = [];
-    for (const photo of secondFormData.images) {
-      const formData = new FormData();
-      formData.append('chat_id', TELEGRAM_CHAT_ID);
-      formData.append('photo', await fetch(photo).then((res) => res.blob()));
-
-      const response = await axios.post(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`,
-        formData
-      );
-
-      if (response.data && response.data.ok) {
-        uploadedimages.push({
-          type: 'photo',
-          media: response.data.result.photo[0].file_id,
-        });
-      }
+    try {
+      // Step 1: Send form data to your backend
+      const res = await axios.post("http://localhost:3000/api/residency/create", {
+        email,
+        secondFormData,
+      });
+      console.log("Backend Response:", res);
+    } catch (error) {
+      console.error("Error sending data to backend:", error);
+      throw error;
     }
 
-    // Send media group (grid images)
-    if (uploadedimages.length > 0) {
+
+    const google_sheet_url =
+    "https://script.google.com/macros/s/AKfycbx5n3QIcwrRlGxEhJgLC_uf4z82S7sI8vHgivKri6FHYG24aySoNXASWjNLQVaga7Zf/exec";
+
+  // Create a FormData object with all the necessary details
+  const formData = new FormData();
+  Object.entries({
+    ...secondFormData,
+    images: secondFormData.images.join(", "), // Convert images array to a string
+    metro: secondFormData.metro.join(", "), // Convert metro array to a string
+    district: secondFormData.district.join(", "), // Convert district array to a string
+    amenities: secondFormData.amenities.join(", "), // Convert amenities array to a string
+    selectedAdditional: secondFormData.selectedAdditional?.join(", ") || "", // Convert selected additional features to a string
+  }).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  try {
+    const googleResponse = await fetch(google_sheet_url, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (googleResponse.ok) {
+      const responseData = await googleResponse.json();
+      console.log("Data posted to Google Sheets successfully:", responseData);
+      alert("Details posted successfully to Google Sheets!");
+    } else {
+      console.error(
+        "Failed to post data to Google Sheets:",
+        googleResponse.statusText
+      );
+      alert("Failed to post details to Google Sheets.");
+    }
+  } catch (error) {
+    console.error("Error posting to Google Sheets:", error);
+    alert("An error occurred while posting to Google Sheets.");
+  }
+
+
+
+    
+    
+
+
+  
+    try {
+      const TELEGRAM_BOT_TOKEN = '7712916176:AAF15UqOplv1hTdJVxILWoUOEefEKjGJOso';
+      const TELEGRAM_CHAT_ID = '1469627446';
+  
+      const uploadImagesToTelegram = async (images, chatId, botToken) => {
+        const uploadedImages = [];
+  
+        for (const photo of images) {
+          const formData = new FormData();
+          formData.append("chat_id", chatId);
+          formData.append("photo", await fetch(photo).then((res) => res.blob()));
+  
+          const response = await axios.post(
+            `https://api.telegram.org/bot${botToken}/sendPhoto`,
+            formData
+          );
+  
+          if (images) {
+            uploadedImages.push({
+              type: "photo",
+              media: response.data.result.photo[0].file_id,
+            });
+          }
+        }
+  
+        // Send all uploaded images as a grid using sendMediaGroup
+        if (uploadedImages.length > 0) {
+          await axios.post(
+            `https://api.telegram.org/bot${botToken}/sendMediaGroup`,
+            {
+              chat_id: chatId,
+              media: uploadedImages,
+            }
+          );
+        }
+  
+        console.log("Images sent as a grid to Telegram successfully!");
+      };
+  
+      // Step 2: Upload grid images
+      const images = secondFormData.images; // Array of image URLs or paths
+      await uploadImagesToTelegram(images, TELEGRAM_CHAT_ID, TELEGRAM_BOT_TOKEN);
+  
+      // Step 3: Send the text message
+      const message = `
+      #${secondFormData?.city} #${secondFormData?.district} 🏢 #${secondFormData?.metro} 📍 ${secondFormData.address}
+      
+      🏢 #${secondFormData?.title} Apartment for #${secondFormData?.type}
+      ✨ #${secondFormData?.residencyType}
+      
+      🏠 ${secondFormData.area} Sq.m | #${secondFormData?.floor}floor | #${secondFormData?.bathrooms}Bathroom
+      
+  ${secondFormData?.parking >= 1 ? "✅ Parking" : ""} 
+ ${secondFormData.amenities
+  .map((amenity) => `✅ #${amenity.replace(/\s+/g, "")}`) // Remove spaces in amenity names
+  .join("\n")}
+
+      
+     ❌${secondFormData.parking === 0?"Parking" : ""}  ❌ Storage
+      
+      👥 For: Business
+      🐕 Pets: ${secondFormData.selectedAdditional === "noPetsRestriction"? "Allowed":"Not Allowed"}
+      ⏰ #LongTerm
+      
+      💰 ${secondFormData.price}${secondFormData.currency} | Deposit ${secondFormData.price}${secondFormData.currency}
+      0% Commission
+      #Price${secondFormData.price}
+      
+ 
+👤  Contact: [@David_Tibelashvili]
+📞 +995 599 20 67 16 
+      
+      ⭐️ Check all listings | Reviews
+      
+      📸 [Instagram](https://www.instagram.com/rent_in_tbilisi?igsh=MWU5aWVxa3Fxd2dlbw==) 🌐 [FB](https://www.facebook.com/share/j6jBfExKXjgNVpVQ/) 🎥 [YouTube](https://www.youtube.com/@RENTINTBILISI)`;
+      
+      
+  
       await axios.post(
-        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMediaGroup`,
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
         {
           chat_id: TELEGRAM_CHAT_ID,
-          media: uploadedimages,
+          text: message,
+          parse_mode: "Markdown",
         }
       );
+  
+      console.log("Message sent to Telegram successfully!");
+  
+      alert("Details published to Telegram successfully!");
+      setStep(1); // Navigate back to FirstComponent
+    } catch (error) {
+      console.error("Failed to publish details to Telegram:", error);
+      alert("Failed to publish details. Please try again.");
     }
-
-    alert('Details published to Telegram successfully!');
-    setStep(1); // Navigate back to FirstComponent
-  } catch (error) {
-    console.error('Failed to publish details to Telegram:', error);
-    alert('Failed to publish details. Please try again.');
-  }
-};
-
+  };
+  
   
   
 
