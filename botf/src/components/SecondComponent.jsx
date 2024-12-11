@@ -162,21 +162,21 @@ import axios from 'axios';
   .join("\n")}
 
       
-     ❌${secondFormData.parking === 0?"Parking" : ""}  ❌ Storage
+     ${secondFormData.parking === 0?"❌ Parking" : ""}
       
       👥 For: Business
-      🐕 Pets: ${secondFormData.selectedAdditional === "noPetsRestriction"? "Allowed":"Not Allowed"}
-      ⏰ #LongTerm
+      🐕 Pets: ${secondFormData.selectedAdditional === "noPetsRestriction"? "Allowed":"❌Not Allowed"}
+      ⏰ #${secondFormData?.term} #${secondFormData?.termDuration}
       
       💰 ${secondFormData.price}${secondFormData.currency} | Deposit ${secondFormData.price}${secondFormData.currency}
       0% Commission
       #Price${secondFormData.price}
       
  
-👤  Contact: [@David_Tibelashvili]
+👤 Contact: [@David_Tibelashvili]
 📞 +995 599 20 67 16 
       
-      ⭐️ Check all listings | Reviews
+      ⭐️ [Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)
       
       📸 [Instagram](https://www.instagram.com/rent_in_tbilisi?igsh=MWU5aWVxa3Fxd2dlbw==) 🌐 [FB](https://www.facebook.com/share/j6jBfExKXjgNVpVQ/) 🎥 [YouTube](https://www.youtube.com/@RENTINTBILISI)`;
       
@@ -528,6 +528,9 @@ const handleImageUpload = (e) => {
       />
     </div>
   )}
+
+
+
 </div>
 
 
@@ -831,6 +834,30 @@ const handleImageUpload = (e) => {
         </select>
       </div>
 
+      <div className="mt-4">
+      <label className="block text-sm font-medium">Price</label>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={secondFormData.price}
+          onChange={(e) =>
+            setSecondFormData({ ...secondFormData, price: Number(e.target.value) })
+          }
+          className="w-full p-2 border border-gray-300 rounded-md"
+        />
+        <select
+          value={secondFormData.currency}
+          onChange={(e) =>
+            setSecondFormData({ ...secondFormData, currency: e.target.value })
+          }
+          className="p-2 border border-gray-300 rounded-md"
+        >
+          <option value="USD">USD</option>
+          <option value="GEL">GEL</option>
+        </select>
+      </div>
+    </div>
+
       {/* Deposit */}
       <div>
         <label className="block text-sm font-medium">Deposit</label>
@@ -919,6 +946,57 @@ const handleImageUpload = (e) => {
           <h3 className="text-lg font-semibold">Amenities</h3>
           <div className="flex gap-2 mt-2 flex-wrap">
             {['Central', 'Air conditioner', 'Electric', 'Underfloor amenities', 'Karma'].map(
+              (option) => (
+                <button
+                  key={option}
+                  onClick={() =>
+                    setSecondFormData((prev) => ({
+                      ...prev,
+                      amenities: prev.amenities.includes(option)
+                        ? prev.amenities.filter((h) => h !== option)
+                        : [...prev.amenities, option],
+                    }))
+                  }
+                  className={`px-4 py-2 rounded-md ${
+                    secondFormData.amenities.includes(option)
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-600'
+                  }`}
+                >
+                  {option}
+                </button>
+              )
+            )}
+          </div>
+        </div>
+
+
+
+        <div className=''>
+          <h3 className="text-lg font-semibold">Amenities</h3>
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {[
+              
+              
+              "AirConditioner",
+              "Oven",
+              "Microwave",
+              "VacuumCleaner",
+              "Balcony",
+              "Stove",
+              "Dishwasher",
+              "SmartTV",
+              "WiFi",
+              "ParkingPlace",
+              "PlayStation",
+              "Projector",
+              "Elevator",
+              "Heating",
+              "PET",
+            
+            
+            
+            ].map(
               (option) => (
                 <button
                   key={option}
