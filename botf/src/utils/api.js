@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-    baseURL: "http://localhost:3000/api", // Use HTTP for local development
+    baseURL: "https://add-bot-server.vercel.app/api", // Use HTTP for local development
   });
   
 
