@@ -8,15 +8,15 @@ const API_BASE_URL = "https://add-bot-server.vercel.app/api"; // Replace with yo
 const CardDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
-   const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [editedCard, setEditedCard] = useState(location.state?.card || {});
 
-  
+  const email = localStorage.getItem("email");
 
   const handleBack = () => {
     navigate(-1);
   };
-  
+
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -52,7 +52,7 @@ const CardDetails = () => {
 
   if (!editedCard) {
     return (
-      <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white ">
+      <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white">
         <h2 className="text-xl font-bold mb-4">No Card Selected</h2>
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
@@ -185,48 +185,46 @@ const CardDetails = () => {
               <li key={index} className="text-sm">{item}</li>
             ))
           ) : (
-            <p className="text-sm text-gray-500">No heating information</p>
+            <p className="text-sm text-gray-500">No additional information</p>
           )}
         </ul>
       </div>
 
-      {/* Additional Features */}
-     
       {/* Buttons */}
       <div className="p-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          {isEditing ? (
+        {email === editedCard.userEmail ? (
+          <div className="flex items-center space-x-4">
+            {isEditing ? (
+              <button
+                className="px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600"
+                onClick={handleSave}
+              >
+                Save
+              </button>
+            ) : (
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
+                onClick={handleEdit}
+              >
+                Edit
+              </button>
+            )}
             <button
-              className="px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600"
-              onClick={handleSave}
+              className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600"
+              onClick={handleDelete}
             >
-              Save
+              Delete
             </button>
-          ) : (
-            <button
-              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
-              onClick={handleEdit}
-            >
-              Edit
-            </button>
-          )}
-          <button
-            className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600"
-            onClick={handleDelete}
-          >
-            Delete
-          </button>
-        </div>
-        <div className="flex items-center space-x-4">
-          
-         
-          <button
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-400"
-            onClick={handleBack}
-          >
-            Back
-          </button>
-        </div>
+          </div>
+        ) : (
+          <p className="text-gray-500">You cannot edit or delete this property.</p>
+        )}
+        <button
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-400"
+          onClick={handleBack}
+        >
+          Back
+        </button>
       </div>
     </div>
   );
@@ -244,9 +242,9 @@ CardDetails.propTypes = {
     images: PropTypes.arrayOf(PropTypes.string),
     amenities: PropTypes.arrayOf(PropTypes.string),
     heating: PropTypes.arrayOf(PropTypes.string),
-    payment: PropTypes.string,
+    selectedAdditional: PropTypes.arrayOf(PropTypes.string),
+    userEmail: PropTypes.string,
   }),
 };
 
 export default CardDetails;
-
