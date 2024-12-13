@@ -40,7 +40,7 @@ function Home() {
     try {
       if (isLiked) {
         await axios.delete(
-          `http://localhost:3000/api/user/dislikes/${propertyId}`,
+          `https://add-bot-server.vercel.app/api/user/dislikes/${propertyId}`,
           { data: { email } }
         );
         setFavorites((prev) => prev.filter((id) => id !== propertyId)); // Remove from favorites
