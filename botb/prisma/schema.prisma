@@ -14,13 +14,14 @@ datasource db {
 }
 
 model User {
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
-  email        String      @unique
-  password     String
-  residencies  Residency[] @relation("UserResidencies")
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  email       String      @unique
+  password    String
+  residencies Residency[] @relation("UserResidencies")
 
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  favoriteResidency String[]
 
   @@map("users")
 }
@@ -44,10 +45,12 @@ model Residency {
   totalFloors   Int?
   area          Float?
   type          String?
+
   parking       Int?
   balcony       Boolean?
   bathrooms     Int?
   amenities     String[] @default([])
+  heating     String[] @default([])
   termDuration     String?
   term     String?
    selectedAdditional String[] @default([])
