@@ -39,7 +39,7 @@ const UploadImage = ({ onImageUpdate }) => {
     };
 
     loadCloudinary();
-  }, [imageURLs, onImageUpdate]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center">
