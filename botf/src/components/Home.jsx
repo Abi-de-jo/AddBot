@@ -1,7 +1,3 @@
- 
-
-
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useProperties from "../hooks/useProperties";
@@ -18,7 +14,7 @@ function Home() {
   const navigate = useNavigate(); // Navigation hook
 
   const email = localStorage.getItem("email"); // Get user email from localStorage
-
+   
   useEffect(() => {
     const fetchLikes = async () => {
       if (email) {
@@ -97,71 +93,78 @@ function Home() {
         ) : (
           // List View
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-            {data.map((property) => (
-              <div
-                key={property.id}
-                className="flex flex-col bg-gray-50 border border-gray-200 rounded-md shadow cursor-pointer relative"
-                onClick={() => handleCardClick(property)}
-              >
-                {/* Image */}
-                <img
-                  src={
-                    property.images?.[0] ||
-                    "https://via.placeholder.com/300x200?text=No+Image"
-                  }
-                  alt="Property"
-                  className="w-full h-48 object-cover rounded-t-md"
-                />
+          {data.map((property) => (
+  <div
+    key={property.id}
+    className="flex flex-col bg-gray-50 border border-gray-200 rounded-md shadow cursor-pointer relative"
+    onClick={() => handleCardClick(property)}
+  >
+    {/* Image */}
+    <img
+      src={
+        property.images?.[0] ||
+        "https://via.placeholder.com/300x200?text=No+Image"
+      }
+      alt="Property"
+      className="w-full h-48 object-cover rounded-t-md"
+    />
 
-                {/* Details */}
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {property.title || "Untitled Property"}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">Price:</span> {property.price || "N/A"}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">Type:</span> {property.type || "N/A"}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">City:</span> {property.city || "N/A"}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">Address:</span> {property.address || "N/A"}
-                  </p>
-                </div>
+    {/* Details */}
+    <div className="p-4">
+      <h3 className="text-lg font-semibold text-gray-800">
+        {property.title || "Untitled Property"}
+      </h3>
+      <p className="text-sm text-gray-600 mt-1">
+        <span className="font-medium">Price:</span> {property.price || "N/A"}
+      </p>
+      <p className="text-sm text-gray-600 mt-1">
+        <span className="font-medium">Type:</span> {property.type || "N/A"}
+      </p>
+      <p className="text-sm text-gray-600 mt-1">
+        <span className="font-medium">City:</span> {property.city || "N/A"}
+      </p>
+      <p className="text-sm text-gray-600 mt-1">
+        <span className="font-medium">Address:</span> {property.address || "N/A"}
+      </p>
+    </div>
 
-                {/* Buttons */}
-                <div className="flex justify-between items-center p-4 border-t border-gray-200">
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering card click
-                      alert("Write functionality coming soon!");
-                    }}
-                  >
-                    Write
-                  </button>
-                </div>
+    {/* Buttons */}
+    <div className="flex justify-between items-center p-4 border-t border-gray-200">
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent triggering card click
+          alert("Write functionality coming soon!");
+        }}
+      >
+        Write
+      </button>
+    </div>
 
-                {/* Favorite Icon */}
-                <div
-                  className="absolute bottom-4 right-4 cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering card click
-                    toggleFavorite(property.id);
-                  }}
-                  onTouchEnd={(e) => handleTouchEnd(e, property.id)}
-                >
-                  {favorites.includes(property.id) ? (
-                    <AiFillHeart color="red" size={30} className="animate-pulse" />
-                  ) : (
-                    <BiHeart color="gray" size={30} />
-                  )}
-                </div>
-              </div>
-            ))}
+    {/* Favorite Icon */}
+    {email !== property.userEmail ? ( // Check if the property doesn't belong to the current user
+      <div
+        className="absolute bottom-4 right-4 cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent triggering card click
+          toggleFavorite(property.id);
+        }}
+        onTouchEnd={(e) => handleTouchEnd(e, property.id)}
+      >
+        {favorites.includes(property.id) ? (
+          <AiFillHeart color="red" size={30} className="animate-pulse" />
+        ) : (
+          <BiHeart color="gray" size={30} />
+        )}
+      </div>
+    ) : (
+      <div className="absolute bottom-4 right-4 text-gray-500">
+        Owned
+      </div>
+    )}
+  </div>
+))}
+
           </div>
         )}
       </div>
@@ -170,4 +173,3 @@ function Home() {
 }
 
 export default Home;
-
