@@ -1,22 +1,24 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({setStep}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
- 
+ const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
      try {
-      const response = await axios.post(`https://add-bot-server.vercel.app/api/user/register`, {
+      const response = await axios.post(`http://localhost:3000/api/user/register`, {
         email,
         password,
       });
       localStorage.setItem("email",email)
       console.log("Admin created successfully:", response.data);
-      setStep(1)
+    setStep(1)
+      navigate("/main");
       } catch (err) {
       console.error("Error during admin creation:", err.response?.data || err.message);
     }  
