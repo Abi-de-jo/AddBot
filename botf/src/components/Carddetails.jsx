@@ -3,23 +3,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-const API_BASE_URL = "https://add-bot-server.vercel.app/api"; // Replace with your backend base URL
+const API_BASE_URL = "http://localhost:3000/api"; // Replace with your backend base URL
 
 const CardDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+   const [isEditing, setIsEditing] = useState(false);
   const [editedCard, setEditedCard] = useState(location.state?.card || {});
 
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-  };
+  
 
   const handleBack = () => {
     navigate(-1);
   };
-
+  
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -55,7 +52,7 @@ const CardDetails = () => {
 
   if (!editedCard) {
     return (
-      <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white">
+      <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white ">
         <h2 className="text-xl font-bold mb-4">No Card Selected</h2>
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
@@ -68,7 +65,7 @@ const CardDetails = () => {
   }
 
   return (
-    <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white space-y-4">
+    <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white space-y-4 mb-5">
       {/* Image Carousel */}
       <div className="relative w-full h-64 bg-gray-200 rounded-md overflow-hidden">
         {editedCard.images && editedCard.images.length > 0 ? (
@@ -180,13 +177,21 @@ const CardDetails = () => {
           )}
         </ul>
       </div>
-
-      {/* Additional Features */}
       <div>
-        <h3 className="font-semibold">Additional Features</h3>
-        <p className="text-sm">{editedCard.payment || 'N/A'}</p>
+        <h3 className="font-semibold">Additional Information</h3>
+        <ul className="list-disc ml-6">
+          {editedCard.selectedAdditional && editedCard.selectedAdditional.length > 0 ? (
+            editedCard.selectedAdditional.map((item, index) => (
+              <li key={index} className="text-sm">{item}</li>
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">No heating information</p>
+          )}
+        </ul>
       </div>
 
+      {/* Additional Features */}
+     
       {/* Buttons */}
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -213,25 +218,8 @@ const CardDetails = () => {
           </button>
         </div>
         <div className="flex items-center space-x-4">
-          <button
-            className="p-2 rounded-md shadow hover:bg-gray-100"
-            onClick={toggleFavorite}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill={isFavorite ? 'red' : 'none'}
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-              />
-            </svg>
-          </button>
+          
+         
           <button
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-400"
             onClick={handleBack}

@@ -26,6 +26,7 @@ export const createResidency = asyncHandler(async (req, res) => {
       totalFloors,
       balcony,
       amenities,
+      heating,
       description,
       video,
       images, // Ensure this is an array
@@ -51,6 +52,7 @@ export const createResidency = asyncHandler(async (req, res) => {
           title,
           address,
           metro,
+          heating,
           district,
           price,
           selectedAdditional,

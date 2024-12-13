@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-const API_BASE_URL = "https://add-bot-server.vercel.app"; // Replace with your backend base URL
+const API_BASE_URL = "https://localhost:3000"; // Replace with your backend base URL
 const FirstComponent = ({ setStep }) => {
   const [localFormData, setLocalFormData] = useState({
     address: '',
@@ -34,7 +34,7 @@ const FirstComponent = ({ setStep }) => {
     if (error) {
       console.error('Error fetching properties:', error);
     }
-  }, [filteredData, error]);
+  }, [error]);
 
   useEffect(() => {
     const savedFormData = JSON.parse(localStorage.getItem('form1'));
@@ -48,7 +48,7 @@ const FirstComponent = ({ setStep }) => {
 
   useEffect(() => {
     localStorage.setItem('form1', JSON.stringify(localFormData));
-  }, [localFormData]);
+  }, []);
 
   const handlePublish = () => {
     if (!localFormData.address) {
@@ -185,7 +185,7 @@ const FirstComponent = ({ setStep }) => {
         </div>
 
         {/* Publish Button */}
-        <div className="fixed bottom-0 w-full p-4 bg-white shadow-md flex justify-center">
+        <div className="fixed bottom-0 w-full p-1 -ml-4 -z-30  bg-white shadow-md flex justify-center">
           <button
             onClick={handlePublish}
             className="w-full max-w-[300px] py-3 bg-blue-600 text-white font-semibold text-sm rounded-md shadow hover:bg-blue-700"

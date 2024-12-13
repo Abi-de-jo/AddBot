@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-    baseURL: "https://add-bot-server.vercel.app/api", // Use HTTP for local development
+    baseURL: "http://localhost:3000/api", // Use HTTP for local development
   });
   
 
@@ -55,3 +55,26 @@ export const getProperty = async (id) => {
     throw error;
   }
 };
+
+export const getAllLikes = async () => {
+  const email = localStorage.getItem("email")
+
+   try {
+    const res = await api.post(
+      `/user/allLikes`,
+      {
+        email,
+      },
+      
+    );
+    console.log(res.data,"asdfghjkkjhgfdsdfghjk")
+    return res.data;
+
+    
+  } catch (error) {
+    // toast.error("Something went wrong while fetching bookings");
+    // throw error
+
+    console.log(error)
+  }
+}

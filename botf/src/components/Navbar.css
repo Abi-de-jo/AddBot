@@ -1,0 +1,32 @@
+.navbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+     
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    background-color: #f8f9fa; /* Light background */
+    border-top: 1px solid #ddd; /* Top border */
+    z-index: 10; /* Ensure it's above other elements */
+  }
+  
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #6c757d; /* Gray color */
+    transition: color 0.3s ease;
+  }
+  
+  .nav-item.active {
+    color: #007bff; /* Blue for active link */
+  }
+  
+  .nav-item:hover {
+    color: #0056b3; /* Darker blue on hover */
+  }
+  
