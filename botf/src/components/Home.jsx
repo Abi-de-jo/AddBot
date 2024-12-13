@@ -1,3 +1,7 @@
+ 
+
+
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useProperties from "../hooks/useProperties";
@@ -6,7 +10,7 @@ import { BiHeart } from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
 import axios from "axios";
 import { getAllLikes } from "../utils/api";
- 
+
 function Home() {
   const { data, isLoading, error } = useProperties(); // Fetch properties using the hook
   const [isMapView, setIsMapView] = useState(false); // Toggle between List and Map view
@@ -20,7 +24,7 @@ function Home() {
       if (email) {
         try {
           const likedProperties = await getAllLikes(); // Fetch liked properties
-           setFavorites(likedProperties); // Update favorites state
+          setFavorites(likedProperties); // Update favorites state
           console.log("Fetched liked properties:", likedProperties);
         } catch (error) {
           console.error("Error fetching liked properties", error);
@@ -46,7 +50,7 @@ function Home() {
         setFavorites((prev) => prev.filter((id) => id !== propertyId)); // Remove from favorites
         console.log(`Property Disliked: ${propertyId}`);
       } else {
-        await axios.post(`http://localhost:3000/api/user/likes/${propertyId}`, {
+        await axios.post(`https://add-bot-server.vercel.app/api/user/likes/${propertyId}`, {
           email,
         });
         setFavorites((prev) => [...prev, propertyId]); // Add to favorites
@@ -55,6 +59,11 @@ function Home() {
     } catch (error) {
       console.error("Error toggling favorite status", error);
     }
+  };
+
+  const handleTouchEnd = (e, propertyId) => {
+    e.preventDefault(); // Prevent triggering multiple events
+    toggleFavorite(propertyId);
   };
 
   if (isLoading) {
@@ -143,6 +152,7 @@ function Home() {
                     e.stopPropagation(); // Prevent triggering card click
                     toggleFavorite(property.id);
                   }}
+                  onTouchEnd={(e) => handleTouchEnd(e, property.id)}
                 >
                   {favorites.includes(property.id) ? (
                     <AiFillHeart color="red" size={30} className="animate-pulse" />
@@ -160,3 +170,4 @@ function Home() {
 }
 
 export default Home;
+
