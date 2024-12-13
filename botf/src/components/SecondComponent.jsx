@@ -872,7 +872,7 @@ const SecondComponent = ({ setStep }) => {
                 </div>
               </div>
 
-              {/* Deposit */}
+              {/* Depost */}
               <div>
                 <label className="block text-sm font-medium">Deposit</label>
                 <input
