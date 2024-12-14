@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useProperties from "../hooks/useProperties";
 import { useNavigate } from "react-router-dom"; // Import the hook for navigation
 import { BiHeart } from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
+import axios from "axios";
+import { getAllLikes } from "../utils/api";
 
 function Search() {
   const [favorites, setFavorites] = useState([]); // Track favorite properties
-
   const { data, isLoading, error } = useProperties(); // Fetch all properties using the hook
   const [searchTerm, setSearchTerm] = useState(""); // State to track the search term
   const [filters, setFilters] = useState({
@@ -14,17 +15,46 @@ function Search() {
     city: "",
   });
   const navigate = useNavigate(); // Hook for navigation
-const email = localStorage.getItem("email")
-  const toggleFavorite = (propertyId) => {
-    setFavorites((prevFavorites) =>
-      prevFavorites.includes(propertyId)
-        ? prevFavorites.filter((id) => id !== propertyId)
-        : [...prevFavorites, propertyId]
-    );
-    console.log("Favourite Added :", propertyId)
-    console.log("Email :", email)
+  const email = localStorage.getItem("email");
 
+  useEffect(() => {
+    const fetchLikes = async () => {
+      if (email) {
+        try {
+          const likedProperties = await getAllLikes(); // Fetch liked properties
+          setFavorites(likedProperties); // Update favorites state
+          console.log("Fetched liked properties:", likedProperties);
+        } catch (error) {
+          console.error("Error fetching liked properties", error);
+        }
+      }
+    };
+    fetchLikes();
+  }, [email]);
+
+  const toggleFavorite = async (propertyId) => {
+    const isLiked = favorites.includes(propertyId);
+
+    try {
+      if (isLiked) {
+        await axios.delete(
+          `https://add-bot-server.vercel.app/api/user/dislikes/${propertyId}`,
+          { data: { email } }
+        );
+        setFavorites((prev) => prev.filter((id) => id !== propertyId)); // Remove from favorites
+        console.log(`Property Disliked: ${propertyId}`);
+      } else {
+        await axios.post(`https://add-bot-server.vercel.app/api/user/likes/${propertyId}`, {
+          email,
+        });
+        setFavorites((prev) => [...prev, propertyId]); // Add to favorites
+        console.log(`Property Liked: ${propertyId}`);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite status", error);
+    }
   };
+
   // Filter properties based on the search term and filters
   const filteredProperties = data?.filter((property) => {
     const searchValue = searchTerm.toLowerCase();
