@@ -51,7 +51,7 @@ const SecondComponent = ({ setStep }) => {
     try {
       // Step 1: Send form data to your backend
       const res = await axios.post(
-        "http://localhost:3000/api/residency/create",
+        "https://add-bot-server.vercel.app/api/residency/create",
         {
           email,
           secondFormData,
