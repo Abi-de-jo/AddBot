@@ -51,7 +51,7 @@ const SecondComponent = ({ setStep }) => {
     try {
       // Step 1: Send form data to your backend
       const res = await axios.post(
-        "https://add-bot-server.vercel.app/api/residency/create",
+        "http://localhost:3000/api/residency/create",
         {
           email,
           secondFormData,
@@ -202,7 +202,7 @@ const SecondComponent = ({ setStep }) => {
   
         return chunkedAmenities
           .map((row) =>
-            row.map((amenity) =>`✅#${amenity.replace(/\s+/g,"")}`).join("")
+            row.map((amenity) => `✅#${amenity.replace(/\s+/g, "")}`).join("  ")
           )
           .join("\n");
       };
@@ -213,16 +213,17 @@ const SecondComponent = ({ setStep }) => {
   
       const message = `
   #${secondFormData?.city}  #${secondFormData?.district} 🏢#${secondFormData?.metro} 
-📍[${secondFormData.address}](${secondFormData.addressURL})
+📍 [${secondFormData.address}](${secondFormData.addressURL})
   
   #${secondFormData?.title} Apartment near 
   Apartment for #${secondFormData?.type}✨ #${secondFormData?.residencyType}
-  🏠 ${secondFormData.area} Sq.m | ${secondFormData?.floor}floor | #${secondFormData?.bathrooms}Bath
   
-  ${amenitiesFormatted} 
-
-  ${secondFormData?.parking >= 1 ? "✅ Parking" : "❌ Parking"} 
-   
+  🏠 ${secondFormData.area} Sq.m | #${secondFormData?.floor}floor | #${secondFormData?.bathrooms}Bath
+  
+  ${amenitiesFormatted}
+  ${secondFormData?.parking >= 1 ? "✅ Parking" : ""} 
+  ${secondFormData.parking === 0 ? "❌ Parking" : ""}
+  
   🐕 Pets: ${
         secondFormData.additional === "PetsRestriction"
           ? "#Allowed"
@@ -236,34 +237,14 @@ const SecondComponent = ({ setStep }) => {
           ? "12month"
           : ""
       }
-  💳 #${secondFormData?.paymentMethod}    
-
+  💳 #${secondFormData?.paymentMethod}   
   💰 ${secondFormData.price}${secondFormData.currency == "USD" ? "$" : "₾"} | Deposit ${secondFormData.price}${secondFormData.currency == "USD" ? "$" : "₾"}
   0% Commission
-   ${secondFormData.price >= 0 && secondFormData.price <= 300
-    ? "#Price0to300"
-    : secondFormData.price > 300 && secondFormData.price <= 500
-    ? "#Price300to500"
-    : secondFormData.price > 500 && secondFormData.price <= 700
-    ? "#Price500to700"
-    : secondFormData.price > 700 && secondFormData.price <= 900
-    ? "#Price700to900"
-    : secondFormData.price > 900 && secondFormData.price <= 1200
-    ? "#Price900to1200"
-    : secondFormData.price > 1200 && secondFormData.price <= 1500
-    ? "#Price1200to1500"
-    : secondFormData.price > 1500 && secondFormData.price <= 2000
-    ? "#Price1500to2000"
-    : secondFormData.price > 2000 && secondFormData.price <= 2500
-    ? "#Price2000to2500"
-    : secondFormData.price > 2500 && secondFormData.price <= 3000
-    ? "#Price2500to3000"
-    : secondFormData.price > 3000
-    ? "PriceAbove3000"
-    : ""}
-
+  #Price${secondFormData.price}
+  
   👤 Contact: [@David_Tibelashvili]
   📞 +995 599 20 67 16 
+  
   ⭐ [Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)
   
   📸 [Instagram](https://www.instagram.com/rent_in_tbilisi?igsh=MWU5aWVxa3Fxd2dlbw==) 🌐 [FB](https://www.facebook.com/share/j6jBfExKXjgNVpVQ/) 🎥 [YouTube](https://www.youtube.com/@RENTINTBILISI)
@@ -485,169 +466,195 @@ const SecondComponent = ({ setStep }) => {
         {/* metro */}
 
         <div>
-  {/* Metro Options Label */}
-  <label className="block text-sm font-medium mb-2">Metro Options</label>
-  
-  {/* Metro Options Checkboxes */}
-  <div className="flex flex-wrap gap-4">
-    {[
-      "LibertySquare", "Rustaveli", "Marjanishvili", "StationSquare", 
-      "Tsereteli", "Gotsiridze", "Nadzaladevi", "Didube", 
-      "Grmagele", "Guramishvili", "Sarajishvili", "AhmeteliTheatre", 
-      "STUniversity", "VazhaPshavela", "Delisi", "TCUniversity", 
-      "MCUniversity", "AvlabariMetro", "IsaniMetro", "300Aragveli", 
-      "SamgoriMetro", "Varketili", "Others"
-    ].map((option, index) => (
-      <div key={index} className="flex items-center gap-2">
-        {/* Checkbox Input */}
-        <input
-          type="checkbox"
-          value={option}
-          checked={
-            option === "Others"
-              ? secondFormData.metro.includes("Others")
-              : secondFormData.metro.includes(option)
-          }
-          onChange={(e) => {
-            const isChecked = e.target.checked;
+          <label className="block text-sm font-medium mb-2">
+            Metro Options
+          </label>
+          <div className="flex flex-wrap gap-4">
+            {[
+              "Liberty Square",
+              "Rustaveli",
+              "Marjanishvili",
+              "Station Square",
+              "Tsereteli",
+              "Gotsiridze",
+              "Nadzaladevi",
+              "Didube",
+              "Grmagele",
+              "Guramishvili",
+              "Sarajishvili",
+              "Akhmeteli Theatre",
+              "State University",
+              "Vazha-Pshavela",
+              "Delisi",
+              "Technical University",
+              "Medical University",
+              "Avlabari",
+              "Isani",
+              "300 Aragveli",
+              "Samgori",
+              "Varketili",
+              "Others",
+            ].map((option, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value={option}
+                  checked={
+                    option === "Others"
+                      ? secondFormData.metro.includes("Others")
+                      : secondFormData.metro.includes(option)
+                  }
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
 
-            if (option === "Others") {
-              // Handle "Others" checkbox
-              if (!isChecked) {
-                setSecondFormData({
-                  ...secondFormData,
-                  metro: secondFormData.metro.filter((m) => m !== "Others"),
-                  otherMetro: "", // Clear otherMetro value when unchecked
-                });
-              } else {
-                setSecondFormData({
-                  ...secondFormData,
-                  metro: [...secondFormData.metro, "Others"],
-                });
-              }
-            } else {
-              // Handle standard options
-              const updatedMetro = isChecked
-                ? [...secondFormData.metro, option]
-                : secondFormData.metro.filter((m) => m !== option);
+                    if (option === "Others") {
+                      // Handle "Others" checkbox
+                      if (!isChecked) {
+                        setSecondFormData({
+                          ...secondFormData,
+                          metro: secondFormData.metro.filter(
+                            (m) => m !== "Others"
+                          ),
+                          otherMetro: "", // Clear otherMetro value when unchecked
+                        });
+                      } else {
+                        setSecondFormData({
+                          ...secondFormData,
+                          metro: [...secondFormData.metro, "Others"],
+                        });
+                      }
+                    } else {
+                      // Handle standard options
+                      const updatedMetro = isChecked
+                        ? [...secondFormData.metro, option]
+                        : secondFormData.metro.filter((m) => m !== option);
 
-              setSecondFormData({
-                ...secondFormData,
-                metro: updatedMetro,
-              });
-            }
-          }}
-          className="w-4 h-4"
-        />
-        {/* Checkbox Label */}
-        <label className="text-sm">{option}</label>
-      </div>
-    ))}
-  </div>
+                      setSecondFormData({
+                        ...secondFormData,
+                        metro: updatedMetro,
+                      });
+                    }
+                  }}
+                  className="w-4 h-4"
+                />
+                <label className="text-sm">{option}</label>
+              </div>
+            ))}
+          </div>
 
-  {/* Show text input if "Others" is selected */}
-  {secondFormData.metro.includes("Others") && (
-    <div className="mt-4">
-      <label className="block text-sm font-medium mb-2">
-        Specify Other Metro
-      </label>
-      <input
-        type="text"
-        value={secondFormData.otherMetro || ""}
-        onChange={(e) =>
-          setSecondFormData({
-            ...secondFormData,
-            otherMetro: e.target.value,
-          })
-        }
-        className="w-full p-2 border border-gray-300 rounded-md"
-        placeholder="Enter custom metro"
-      />
-    </div>
-  )}
-</div>
+          {/* Show text input if "Others" is selected */}
+          {secondFormData.metro.includes("Others") && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium">
+                Specify Other Metro
+              </label>
+              <input
+                type="text"
+                value={secondFormData.otherMetro || ""}
+                onChange={(e) =>
+                  setSecondFormData({
+                    ...secondFormData,
+                    otherMetro: e.target.value,
+                  })
+                }
+                className="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Enter custom metro"
+              />
+            </div>
+          )}
+        </div>
 
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            district Options
+          </label>
+          <div className="flex flex-wrap gap-4">
+            {[
+              "Varkateli",
+              "Samgori",
+              "Isani",
+              "Avlabari",
+              "Sololaki",
+              "Chugureti",
+              "Vera",
+              "Mtatsminda",
+              "Vake",
+              "Saburtalo",
+              "Nadzaladevi",
+              "Sanzona",
+              "Dighomi",
+              " Didi dighomi",
+              "Gldani",
+              "Others",
+            ].map((option, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  value={option}
+                  checked={
+                    option === "Others"
+                      ? secondFormData.district.includes("Others")
+                      : secondFormData.district.includes(option)
+                  }
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
 
-<div>
-  {/* District Options Label */}
-  <label className="block text-sm font-medium mb-2">District Options</label>
-  
-  {/* District Options Checkboxes */}
-  <div className="flex flex-wrap gap-4">
-    {[
-      "Vera", "Mtatsminda", "Vake", "Sololaki", "Chugureti", "Saburtalo",
-      "Didube", "Gldani", "Avlabari", "Isani", "Samgori", "Digomi",
-      "DidiDigomi", "Varketili", "Ortachala", "Abanotubani", "Others"
-    ].map((option, index) => (
-      <div key={index} className="flex items-center gap-2">
-        {/* Checkbox Input */}
-        <input
-          type="checkbox"
-          value={option}
-          checked={
-            option === "Others"
-              ? secondFormData.district.includes("Others")
-              : secondFormData.district.includes(option)
-          }
-          onChange={(e) => {
-            const isChecked = e.target.checked;
+                    if (option === "Others") {
+                      // Handle "Others" checkbox
+                      if (!isChecked) {
+                        setSecondFormData({
+                          ...secondFormData,
+                          district: secondFormData.district.filter(
+                            (m) => m !== "Others"
+                          ),
+                          otherdistrict: "", // Clear otherdistrict value when unchecked
+                        });
+                      } else {
+                        setSecondFormData({
+                          ...secondFormData,
+                          district: [...secondFormData.district, "Others"],
+                        });
+                      }
+                    } else {
+                      // Handle standard options
+                      const updateddistrict = isChecked
+                        ? [...secondFormData.district, option]
+                        : secondFormData.district.filter((m) => m !== option);
 
-            if (option === "Others") {
-              // Handle "Others" checkbox
-              if (!isChecked) {
-                setSecondFormData({
-                  ...secondFormData,
-                  district: secondFormData.district.filter((m) => m !== "Others"),
-                  otherdistrict: "", // Clear otherdistrict value when unchecked
-                });
-              } else {
-                setSecondFormData({
-                  ...secondFormData,
-                  district: [...secondFormData.district, "Others"],
-                });
-              }
-            } else {
-              // Handle standard options
-              const updatedDistrict = isChecked
-                ? [...secondFormData.district, option]
-                : secondFormData.district.filter((m) => m !== option);
+                      setSecondFormData({
+                        ...secondFormData,
+                        district: updateddistrict,
+                      });
+                    }
+                  }}
+                  className="w-4 h-4"
+                />
+                <label className="text-sm">{option}</label>
+              </div>
+            ))}
+          </div>
 
-              setSecondFormData({
-                ...secondFormData,
-                district: updatedDistrict,
-              });
-            }
-          }}
-          className="w-4 h-4"
-        />
-        {/* Checkbox Label */}
-        <label className="text-sm">{option}</label>
-      </div>
-    ))}
-  </div>
-
-  {/* Show text input if "Others" is selected */}
-  {secondFormData.district.includes("Others") && (
-    <div className="mt-4">
-      <label className="block text-sm font-medium mb-2">
-        Specify Other District
-      </label>
-      <input
-        type="text"
-        value={secondFormData.otherdistrict || ""}
-        onChange={(e) =>
-          setSecondFormData({
-            ...secondFormData,
-            otherdistrict: e.target.value,
-          })
-        }
-        className="w-full p-2 border border-gray-300 rounded-md"
-        placeholder="Enter custom district"
-      />
-    </div>
-  )}
-</div>
-
+          {/* Show text input if "Others" is selected */}
+          {secondFormData.district.includes("Others") && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium">
+                Specify Other district
+              </label>
+              <input
+                type="text"
+                value={secondFormData.otherdistrict || ""}
+                onChange={(e) =>
+                  setSecondFormData({
+                    ...secondFormData,
+                    otherdistrict: e.target.value,
+                  })
+                }
+                className="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Enter custom metro"
+              />
+            </div>
+          )}
+        </div>
 
         {/* images */}
 
@@ -731,11 +738,10 @@ const SecondComponent = ({ setStep }) => {
             <option value="" disabled>
               Select Residency
             </option>
-            <option value="NewBuilding">NewBuilding</option>
-            <option value="OldBuilding">OldBuilding</option>
-            <option value="HistoricalBuilding">HistoricalBuilding</option>
-            <option value="Reconstruction">Reconstruction</option>
-           </select>
+            <option value="New">New</option>
+            <option value="Old">Old</option>
+            <option value="Mixed">Mixed</option>
+          </select>
         </div>
         <div>
           <select
@@ -750,7 +756,8 @@ const SecondComponent = ({ setStep }) => {
             </option>
             <option value="Rent">Rent</option>
             <option value="Sale">Sale</option>
-             
+            <option value="Lease">Lease</option>
+            <option value="DailyRent">DailyRent</option>
           </select>
         </div>
         {/* Term */}
@@ -872,7 +879,7 @@ const SecondComponent = ({ setStep }) => {
                 </div>
               </div>
 
-              {/* Depost */}
+              {/* Deposit */}
               <div>
                 <label className="block text-sm font-medium">Deposit</label>
                 <input
@@ -982,7 +989,7 @@ const SecondComponent = ({ setStep }) => {
           "Central",
               "Karma",
               "Electric",
-              "Air conditioner"
+              "Air conditioner",
             ].map((option) => (
               <button
                 key={option}
@@ -1010,23 +1017,20 @@ const SecondComponent = ({ setStep }) => {
           <h3 className="text-lg font-semibold">Amenities</h3>
           <div className="flex gap-2 mt-2 flex-wrap">
             {[
-             "Bath",
-             "Shower",
-             "Balcony",
-             "Terrace",
-             "Courtyard",
-             "Parking Place",
-             "Conditioner",
-             "Dishwasher",
-             "Washing Machine",
-             "Oven",
-             "Stove",
-             "Central Heating",
-             "Gaz Heating",
-             "AC Heating",
-             "Fireplace",
-             "Microwave",
-             "Smart TV"
+              "Oven",
+              "Stove",
+              "Heater",
+              "Elevator",
+              "Balcony",
+              "Microwave",
+              "SmartTV",
+              "Dishwasher",
+              "ParkingPlace",
+              "Projector",
+              "VacuumCleaner",
+              "AirConditioner",
+              "WiFi",
+              "PlayStation",
             ].map((option) => (
               <button
                 key={option}
@@ -1115,4 +1119,3 @@ SecondComponent.propTypes = {
 };
 
 export default SecondComponent;
-
