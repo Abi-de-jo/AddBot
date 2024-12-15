@@ -48,7 +48,7 @@ const CardDetails = () => {
   const handleUpdate = async () => {
     if (window.confirm('Are you sure you want to Update this property?')) {
       try {
-        await axios.put(`${API_BASE_URL}/residency/updateDate/${editedCard.id}`);
+        await axios.put(`https://add-bot-server.vercel.app/api/residency/updateDate/${editedCard.id}`);
         alert('Property Updated successfully!');
         navigate(-1);
       } catch (error) {
@@ -231,6 +231,12 @@ const CardDetails = () => {
               onClick={handleDelete}
             >
               Delete
+            </button>
+            <button
+              className="px-4 py-2 bg-yellow-500 text-white rounded-md shadow hover:bg-yellow-600"
+              onClick={handleUpdate}
+            >
+              Update
             </button>
           </div>
         ) : (
