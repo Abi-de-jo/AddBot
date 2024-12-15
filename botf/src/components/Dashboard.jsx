@@ -40,7 +40,7 @@ function Dashboard() {
           }))
         );
       } catch (err) {
-        setError("Failed to fetch data");
+        setError("Failed to fetch data",err);
       } finally {
         setLoading(false);
       }
