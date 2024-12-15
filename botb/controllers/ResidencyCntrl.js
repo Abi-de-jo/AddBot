@@ -2,7 +2,6 @@ import asyncHandler from "express-async-handler";
 import { prisma } from "../lib/prisma.js";
 
 export const createResidency = asyncHandler(async (req, res) => {
-<<<<<<< HEAD
   const {
     title,
     address,
@@ -89,96 +88,6 @@ export const createResidency = asyncHandler(async (req, res) => {
       return res
         .status(400)
         .json({ message: "A residency with this address already exists." });
-=======
-    const {
-      title,
-      address,
-      metro,
-      district,
-      price,
-      discount,
-      commission,
-      propertyType,
-       selectedAdditional,
-      residencyType,
-      termDuration,
-      term,
-      rooms,
-      city,
-      area,
-      type,
-      parking,
-      bathrooms,
-      floor,
-      totalFloors,
-      balcony,
-      amenities,
-      heating,
-      description,
-      video,
-      images, // Ensure this is an array
-    } = req.body.secondFormData;
-  
-    const userEmail = req.body.email;
-  
-    // Log the incoming request to verify structure
-    console.log("Request body:", req.body);
-    console.log("User email:", userEmail);
-  
-    // Validate input
-    if (!userEmail) {
-      return res.status(400).json({ message: "User email is required." });
-    }
-  
-    // Ensure images is an array
-    const imageArray = Array.isArray(images) ? images : [];
-  
-    try {
-      const residency = await prisma.residency.create({
-        data: {
-          title,
-          address,
-          metro,
-          heating,
-          district,
-          price,
-          selectedAdditional,
-           discount,
-          commission,
-          propertyType,
-          residencyType,
-          rooms,
-          termDuration,
-          term,
-          bathrooms,
-          floor,
-          totalFloors,
-          area,
-          type,
-          parking,
-          city,
-          balcony,
-          amenities,
-          description,
-          video,
-          status: "published",
-          images: imageArray,
-          userEmail, // Relates the residency to the user via userEmail
-        },
-      });
-  
-      return res.json({ message: "Residency created successfully", residency });
-    } catch (err) {
-      console.error("Error creating residency:", err);
-  
-      if (err.code === "P2002") {
-        return res
-          .status(400)
-          .json({ message: "A residency with this address already exists." });
-      }
-  
-      return res.status(500).json({ message: err.message });
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
     }
 
     return res.status(500).json({ message: err.message });
