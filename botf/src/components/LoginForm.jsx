@@ -6,29 +6,23 @@ import { useNavigate } from 'react-router-dom';
 const LoginForm = ({ setStep }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-<<<<<<< HEAD
   const [error, setError] = useState(''); // To display error messages
   const navigate = useNavigate();
-=======
- const navigate = useNavigate();
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
 
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     setError(''); // Reset error message
 
-    // Validate minimum password length
-    // if (password.length < 6) {
-    //   setError('Password must be at least 6 characters long.');
-    //   return;
-    // }
+     if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
 
     try {
-      const response = await axios.post(`http://localhost:3000/api/user/register`, {
+      const response = await axios.post(`https://add-bot-server.vercel.app/api/user/register`, {
         email,
         password,
       });
-<<<<<<< HEAD
 
       console.log('User logged in successfully:', response.data.message);
 
@@ -50,15 +44,6 @@ const LoginForm = ({ setStep }) => {
       console.error('Error during login:', err.response?.data || err.message);
       setError(err.response?.data?.error || 'Invalid email or password. Please try again.');
     }
-=======
-      localStorage.setItem("email",email)
-      console.log("Admin created successfully:", response.data);
-    setStep(1)
-      navigate("/main");
-      } catch (err) {
-      console.error("Error during admin creation:", err.response?.data || err.message);
-    }  
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
   };
 
   return (
