@@ -112,6 +112,8 @@ const SecondComponent = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 mb-5">
+       {isConfettiActive && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+        {message && <p className="text-green-600 text-center mt-4">{message}</p>}
       <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
         {/* Deal Type */}
         <div>
@@ -954,8 +956,7 @@ const SecondComponent = () => {
           >
             Publish
           </button>
- {isConfettiActive && <Confetti width={window.innerWidth} height={window.innerHeight} />}
-        {message && <p className="text-green-600 text-center mt-4">{message}</p>}
+
           </div>
       </div>
     </div>
