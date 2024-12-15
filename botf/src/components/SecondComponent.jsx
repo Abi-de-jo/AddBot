@@ -2,8 +2,13 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import UploadImage from "./UploadImage";
-import UploadVideo from "../../UploadVideo";
+import { useNavigate } from "react-router-dom";
 const SecondComponent = () => {
+
+  const navigate = useNavigate()
+   const [isConfettiActive, setIsConfettiActive] = useState(false); // State to toggle confetti
+  const [message, setMessage] = useState(""); // State for the success message
+
   const [secondFormData, setSecondFormData] = useState({
     ...JSON.parse(localStorage.getItem("form1")), // Spread data from form1 directly
     dealType: "Rental",
@@ -60,6 +65,15 @@ const SecondComponent = () => {
           secondFormData,
         }
       );
+       
+        setIsConfettiActive(true);
+      navigate("/home")
+      setMessage("Successfully created! Waiting for Agent Response...");
+      
+      console.log("Backend Response:", res);
+
+      // Automatically stop confetti after 5 seconds
+      setTimeout(() => setIsConfettiActive(false), 5000);
       console.log("Backend Response:", res);
     } catch (error) {
       console.error("Error sending data to backend:", error);
@@ -933,6 +947,10 @@ const SecondComponent = () => {
           >
             Publish
           </button>
+            {isConfettiActive && <Confetti />}
+
+      {/* Show success message */}
+      {message && <p className="text-green-600 text-center mt-4">{message}</p>}
         </div>
       </div>
     </div>
