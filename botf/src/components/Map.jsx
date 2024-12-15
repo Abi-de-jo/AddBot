@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import  { useState, useEffect } from "react";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 
@@ -48,13 +47,3 @@ const Map = () => {
 };
 
 export default Map;
-=======
- 
-function Map() {
-  return (
-    <div>Map</div>
-  )
-}
-
-export default Map
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713

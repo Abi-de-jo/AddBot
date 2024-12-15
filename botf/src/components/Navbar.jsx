@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { NavLink } from "react-router-dom";
 import { AiOutlineSearch, AiOutlineHome } from "react-icons/ai";
 import { BiHeart } from "react-icons/bi";
@@ -33,39 +32,3 @@ function Navbar() {
 }
 
 export default Navbar;
-=======
-import { NavLink } from "react-router-dom";
-import { AiOutlineSearch, AiOutlineHome } from "react-icons/ai";
-import { BiHeart } from "react-icons/bi";
-import { MdAddBox } from "react-icons/md";
-import { FaRegUser } from "react-icons/fa";
-import "./Navbar.css"; // Ensure this file contains appropriate styles
-
-function Navbar() {
-  return (
-    <nav className="navbar">
-      <NavLink to="/home" className="nav-item" activeclassname="active">
-        <AiOutlineHome size={24} />
-      </NavLink>
-
-      <NavLink to="/search" className="nav-item" activeclassname="active">
-        <AiOutlineSearch size={24} />
-      </NavLink>
-
-      <NavLink to="/favorites" className="nav-item" activeclassname="active">
-        <BiHeart size={24} />
-      </NavLink>
-
-      <NavLink to="/ads" className="nav-item" activeclassname="active">
-        <MdAddBox size={24} />
-      </NavLink>
-
-      <NavLink to="/profile" className="nav-item" activeclassname="active">
-        <FaRegUser size={24} />
-      </NavLink>
-    </nav>
-  );
-}
-
-export default Navbar;
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713

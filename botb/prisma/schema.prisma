@@ -45,11 +45,7 @@ model Residency {
   totalFloors   Int?
   area          Float?
   type          String?
-<<<<<<< HEAD
   paymentMethod String?
-=======
-
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
   parking       Int?
   balcony       Boolean?
   bathrooms     Int?

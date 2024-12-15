@@ -40,7 +40,7 @@ function Draft() {
       }
 
       // Update status in the backend
-      await axios.put(`http://localhost:3000/api/residency/accept/${id}`);
+      await axios.put(`https://add-bot-server.vercel.app/api/residency/accept/${id}`);
 
       // Google Sheets Integration
       const googleSheetUrl =

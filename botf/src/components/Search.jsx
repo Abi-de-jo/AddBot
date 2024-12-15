@@ -16,10 +16,7 @@ function Search() {
   });
   const navigate = useNavigate(); // Hook for navigation
   const email = localStorage.getItem("email");
-<<<<<<< HEAD
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
-=======
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
 
   useEffect(() => {
     const fetchLikes = async () => {
@@ -80,7 +77,6 @@ function Search() {
     navigate(`/card/${card.id}`, { state: { card } });
   };
 
-<<<<<<< HEAD
   const clearFilters = () => {
     setFilters({
       price: "",
@@ -93,30 +89,18 @@ function Search() {
       {/* Search Bar */}
       <div className="bg-white p-6 rounded-lg shadow-xl mb-6">
         <h2 className="text-3xl font-bold text-gray-800 mb-4">Search Properties</h2>
-=======
-  return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      {/* Search Bar */}
-      <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Search Properties</h2>
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
         <div className="relative">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-<<<<<<< HEAD
             className="w-full p-4 pl-12 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-=======
-            className="w-full p-4 pl-12 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
             placeholder="🔍 Search properties by title, address, city, or type..."
           />
         </div>
       </div>
 
       {/* Filters Section */}
-<<<<<<< HEAD
       <div className="bg-white p-6 rounded-lg shadow-xl mb-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-gray-700">Filters</h2>
@@ -137,42 +121,12 @@ function Search() {
           >
             Clear Filters
           </button>
-=======
-      <div className="bg-white p-4 rounded-lg shadow-lg mb-6">
-        <h2 className="text-xl font-bold text-gray-700 mb-4">Filters</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Max Price</label>
-            <input
-              type="number"
-              value={filters.price}
-              onChange={(e) => setFilters({ ...filters, price: e.target.value })}
-              className="p-1 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter max price"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">City</label>
-            <input
-              type="text"
-              value={filters.city}
-              onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-              className="p-1 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter city"
-            />
-          </div>
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
         </div>
       </div>
 
       {/* Properties Section */}
-<<<<<<< HEAD
       <div className="bg-white p-6 rounded-lg shadow-xl">
         <h2 className="text-2xl font-bold text-gray-700 mb-6 border-b pb-3 border-gray-200">
-=======
-      <div className="bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-bold text-gray-700 mb-4 border-b pb-2 border-gray-200">
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
           Properties
         </h2>
         {isLoading ? (
@@ -180,20 +134,12 @@ function Search() {
         ) : error ? (
           <p className="text-red-500 text-center">Error fetching properties.</p>
         ) : filteredProperties.length > 0 ? (
-<<<<<<< HEAD
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-=======
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
             {filteredProperties.map((property) => (
               <div
                 key={property.id}
                 onClick={() => handleCardClick(property)} // Attach click handler
-<<<<<<< HEAD
                 className="flex flex-col bg-gradient-to-r from-blue-50 to-gray-100 border border-gray-200 rounded-lg shadow-lg cursor-pointer relative "
-=======
-                className="flex flex-col bg-gray-50 border border-gray-200 rounded-md shadow cursor-pointer relative"
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
               >
                 {/* Image */}
                 <img
@@ -202,26 +148,15 @@ function Search() {
                     "https://via.placeholder.com/300x200?text=No+Image"
                   }
                   alt="Property"
-<<<<<<< HEAD
                   className="w-full h-48 object-cover rounded-t-lg"
-=======
-                  className="w-full h-48 object-cover rounded-t-md"
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
                 />
 
                 {/* Details */}
                 <div className="p-4">
-<<<<<<< HEAD
                   <h3 className="text-lg font-semibold text-gray-800 truncate">
                     {property.title || "Untitled Property"}
                   </h3>
                   <p className="text-sm text-gray-600 mt-2">
-=======
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {property.title || "Untitled Property"}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-1">
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
                     <span className="font-medium">Price:</span> {property.price || "N/A"}
                   </p>
                   <p className="text-sm text-gray-600 mt-1">
@@ -235,22 +170,9 @@ function Search() {
                   </p>
                 </div>
 
-<<<<<<< HEAD
                 {/* Favorite Icon */}
                 <div
                   className="absolute top-4 right-4 cursor-pointer "
-=======
-                {/* Buttons */}
-                <div className="flex justify-between items-center p-4 border-t border-gray-200">
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600">
-                    Write
-                  </button>
-                </div>
-
-                {/* Favorite Icon */}
-                <div
-                  className="absolute bottom-6 right-6 cursor-pointer"
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent triggering card click
                     toggleFavorite(property.id);
@@ -269,7 +191,6 @@ function Search() {
           <p className="text-gray-500 text-center">No properties found matching your search.</p>
         )}
       </div>
-<<<<<<< HEAD
 
       {/* Filter Popup */}
       {isFilterPopupOpen && (
@@ -321,8 +242,6 @@ function Search() {
           </div>
         </div>
       )}
-=======
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
     </div>
   );
 }

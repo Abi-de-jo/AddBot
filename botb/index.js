@@ -20,11 +20,4 @@ app.use("/api/user", userRoute);
 app.use("/api/residency", residencyRoute);
 
 
- 
-app.listen(3000,(req,res)=>{
-
-
-
-  console.log("server runn")
-
-})
+ export default app;
