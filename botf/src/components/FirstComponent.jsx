@@ -18,15 +18,15 @@ const FirstComponent = ({ setStep }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editFormData, setEditFormData] = useState({});
   const [editingId, setEditingId] = useState(null);
-
+  
   const { data, error } = useProperties();
   const email = localStorage.getItem('email'); // Retrieve email from localStorage
-
-  // Filter properties based on email
   const filteredData = data?.filter((property) => property.userEmail === email) || [];
+  
+  // Filter properties based on email
   const publishedCount = filteredData.length;
   const unpublishedCount = 0; // Replace with the actual unpublished count logic if available
-
+  
   useEffect(() => {
     if (filteredData) {
       console.log('Filtered Properties:', filteredData);
@@ -34,7 +34,7 @@ const FirstComponent = ({ setStep }) => {
     if (error) {
       console.error('Error fetching properties:', error);
     }
-  }, [error]);
+  }, [error,filteredData]);
 
   useEffect(() => {
     const savedFormData = JSON.parse(localStorage.getItem('form1'));
