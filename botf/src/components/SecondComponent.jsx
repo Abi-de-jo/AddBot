@@ -4,6 +4,8 @@ import axios from "axios";
 import UploadImage from "./UploadImage";
 import UploadVideo from "../../UploadVideo";
 import { useNavigate } from "react-router-dom";
+import Confetti from "react-confetti"; // Ensure you have this installed
+
 const SecondComponent = () => {
 
   const navigate = useNavigate()
@@ -67,14 +69,18 @@ const SecondComponent = () => {
         }
       );
        
-        setIsConfettiActive(true);
-      navigate("/home")
-      setMessage("Successfully created! Waiting for Agent Response...");
-      
-      console.log("Backend Response:", res);
+       setIsConfettiActive(true);
+    setMessage("Successfully created! Waiting for Agent Response...");
+    console.log("Backend Response:", res);
 
-      // Automatically stop confetti after 5 seconds
-      setTimeout(() => setIsConfettiActive(false), 5000);
+    // Scroll to the top
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smooth scrolling
+    });
+
+    // Automatically stop confetti after 5 seconds
+    setTimeout(() => setIsConfettiActive(false), 5000);
       console.log("Backend Response:", res);
     } catch (error) {
       console.error("Error sending data to backend:", error);
@@ -948,11 +954,9 @@ const SecondComponent = () => {
           >
             Publish
           </button>
-            {isConfettiActive && <Confetti />}
-
-      {/* Show success message */}
-      {message && <p className="text-green-600 text-center mt-4">{message}</p>}
-        </div>
+ {isConfettiActive && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+        {message && <p className="text-green-600 text-center mt-4">{message}</p>}
+          </div>
       </div>
     </div>
   );
