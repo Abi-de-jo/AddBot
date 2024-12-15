@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-    baseURL: "http://localhost:3000/api", // Use HTTP for local development
+    baseURL: "https://add-bot-server.vercel.app/api", // Use HTTP for local development
   });
   
 
@@ -78,7 +78,6 @@ export const getAllLikes = async () => {
     console.log(error)
   }
 }
-<<<<<<< HEAD
 
 export const getAllUsers = async () => {
   try {
@@ -114,5 +113,3 @@ export const getAllDraft = async () => {
     throw error;
   }
 };
-=======
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
