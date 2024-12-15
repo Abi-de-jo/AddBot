@@ -6,10 +6,7 @@ import { BiHeart } from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
 import axios from "axios";
 import { getAllLikes } from "../utils/api";
-<<<<<<< HEAD
 import { LoadScript } from "@react-google-maps/api";
-=======
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
 
 function Home() {
   const { data, isLoading, error } = useProperties(); // Fetch properties using the hook
@@ -18,11 +15,6 @@ function Home() {
   const navigate = useNavigate(); // Navigation hook
 
   const email = localStorage.getItem("email"); // Get user email from localStorage
-<<<<<<< HEAD
-
-=======
-   
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
   useEffect(() => {
     const fetchLikes = async () => {
       if (email) {
@@ -43,35 +35,24 @@ function Home() {
   };
 
   const toggleFavorite = async (propertyId) => {
-<<<<<<< HEAD
     if (!email) {
       alert("Please log in to access likes.");
       navigate("/login"); // Redirect to login page
       return;
     }
 
-=======
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
     const isLiked = favorites.includes(propertyId);
 
     try {
       if (isLiked) {
         await axios.delete(
-<<<<<<< HEAD
-          `http://localhost:3000/api/user/dislikes/${propertyId}`,
-=======
           `https://add-bot-server.vercel.app/api/user/dislikes/${propertyId}`,
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
           { data: { email } }
         );
         setFavorites((prev) => prev.filter((id) => id !== propertyId)); // Remove from favorites
         console.log(`Property Disliked: ${propertyId}`);
       } else {
-<<<<<<< HEAD
-        await axios.post(`http://localhost:3000/api/user/likes/${propertyId}`, {
-=======
         await axios.post(`https://add-bot-server.vercel.app/api/user/likes/${propertyId}`, {
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
           email,
         });
         setFavorites((prev) => [...prev, propertyId]); // Add to favorites
@@ -96,10 +77,7 @@ function Home() {
   }
 
   return (
-<<<<<<< HEAD
     
-=======
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
     <div className="min-h-screen bg-gray-100 p-4">
       {/* Header Section */}
       <div className="flex justify-between items-center bg-white p-6 rounded-lg shadow-lg mb-6">
@@ -117,21 +95,16 @@ function Home() {
         {isMapView ? (
           // Map View
           <div>
-<<<<<<< HEAD
 
 <LoadScript googleMapsApiKey="AIzaSyCzQePlVTWMps35sLtoq4DT7PN5n5_xGbg">
       {/* Your App Components */}
       <Map />
     </LoadScript>
 
-=======
-            <Map />
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
           </div>
         ) : (
           // List View
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-<<<<<<< HEAD
             {data.map((property) => (
               <div
                 key={property.id}
@@ -190,80 +163,6 @@ function Home() {
                 )}
               </div>
             ))}
-=======
-          {data.map((property) => (
-  <div
-    key={property.id}
-    className="flex flex-col bg-gray-50 border border-gray-200 rounded-md shadow cursor-pointer relative"
-    onClick={() => handleCardClick(property)}
-  >
-    {/* Image */}
-    <img
-      src={
-        property.images?.[0] ||
-        "https://via.placeholder.com/300x200?text=No+Image"
-      }
-      alt="Property"
-      className="w-full h-48 object-cover rounded-t-md"
-    />
-
-    {/* Details */}
-    <div className="p-4">
-      <h3 className="text-lg font-semibold text-gray-800">
-        {property.title || "Untitled Property"}
-      </h3>
-      <p className="text-sm text-gray-600 mt-1">
-        <span className="font-medium">Price:</span> {property.price || "N/A"}
-      </p>
-      <p className="text-sm text-gray-600 mt-1">
-        <span className="font-medium">Type:</span> {property.type || "N/A"}
-      </p>
-      <p className="text-sm text-gray-600 mt-1">
-        <span className="font-medium">City:</span> {property.city || "N/A"}
-      </p>
-      <p className="text-sm text-gray-600 mt-1">
-        <span className="font-medium">Address:</span> {property.address || "N/A"}
-      </p>
-    </div>
-
-    {/* Buttons */}
-    <div className="flex justify-between items-center p-4 border-t border-gray-200">
-      <button
-        className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
-        onClick={(e) => {
-          e.stopPropagation(); // Prevent triggering card click
-          alert("Write functionality coming soon!");
-        }}
-      >
-        Write
-      </button>
-    </div>
-
-    {/* Favorite Icon */}
-    {email !== property.userEmail ? ( // Check if the property doesn't belong to the current user
-      <div
-        className="absolute bottom-4 right-4 cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation(); // Prevent triggering card click
-          toggleFavorite(property.id);
-        }}
-        onTouchEnd={(e) => handleTouchEnd(e, property.id)}
-      >
-        {favorites.includes(property.id) ? (
-          <AiFillHeart color="red" size={30} className="animate-pulse" />
-        ) : (
-          <BiHeart color="gray" size={30} />
-        )}
-      </div>
-    ) : (
-      <div className="absolute bottom-4 right-4 text-gray-500">
-        Owned
-      </div>
-    )}
-  </div>
-))}
-
->>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
           </div>
         )}
       </div>
