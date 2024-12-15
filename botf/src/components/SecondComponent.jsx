@@ -2,6 +2,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import UploadImage from "./UploadImage";
+import UploadVideo from "../../UploadVideo";
 import { useNavigate } from "react-router-dom";
 const SecondComponent = () => {
 
