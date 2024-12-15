@@ -3,6 +3,7 @@ import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 
 export const createUser = asyncHandler(async (req, res) => {
+<<<<<<< HEAD
   let { email, password } = req.body;
 
   try {
@@ -71,6 +72,41 @@ export const createUser = asyncHandler(async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "An error occurred" });
+=======
+  console.log("creating a admin");
+
+  let { email, password } = req.body;
+  try {
+    const adminExists = await prisma.user.findUnique({
+      where: { email: email },
+    });
+    if (adminExists) {
+      const isValidPassword = await bcrypt.compare(password, adminExists.password);
+      if (!isValidPassword) {
+        return res
+          .status(401)
+          .json({ message: "Failed to Login Invalid Password" });
+      } else {
+        const { password: userpassword, ...adminInfo } = adminExists;
+        res.status(200).json({ adminInfo, message: "Loged in succesfully" });
+      }
+    }
+
+    if (!adminExists) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const admin = await prisma.user.create({
+        data: { email: email, password: hashedPassword },
+      });
+
+      res.send({
+        message: "admin registered successfully",
+        admin: admin,
+      });
+    } else res.status(201).send({ message: "admin already registered" });
+  } catch (err) {
+    console.log(err);
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
   }
 });
 
@@ -177,4 +213,8 @@ export const getuser = asyncHandler(async (req, res) => {
         console.log(err);
         res.status(500).json({message: "Failed to get Users"})
     }
+<<<<<<< HEAD
 })
+=======
+})
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713

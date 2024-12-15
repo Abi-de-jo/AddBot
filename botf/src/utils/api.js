@@ -78,6 +78,7 @@ export const getAllLikes = async () => {
     console.log(error)
   }
 }
+<<<<<<< HEAD
 
 export const getAllUsers = async () => {
   try {
@@ -113,3 +114,5 @@ export const getAllDraft = async () => {
     throw error;
   }
 };
+=======
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713

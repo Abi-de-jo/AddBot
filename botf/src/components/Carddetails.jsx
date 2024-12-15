@@ -12,7 +12,10 @@ const CardDetails = () => {
   const [editedCard, setEditedCard] = useState(location.state?.card || {});
 
   const email = localStorage.getItem("email");
+<<<<<<< HEAD
   const role = localStorage.getItem("role");
+=======
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
 
   const handleBack = () => {
     navigate(-1);
@@ -206,10 +209,14 @@ const CardDetails = () => {
 
       {/* Buttons */}
       <div className="p-4 flex items-center justify-between">
+<<<<<<< HEAD
         
         
         
         {role ==="admin" || email==editedCard.userEmail ? (
+=======
+        {email === editedCard.userEmail ? (
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
           <div className="flex items-center space-x-4">
             {isEditing ? (
               <button
@@ -232,20 +239,26 @@ const CardDetails = () => {
             >
               Delete
             </button>
+<<<<<<< HEAD
             <button
               className="px-4 py-2 bg-yellow-500 text-white rounded-md shadow hover:bg-yellow-600"
               onClick={handleUpdate}
             >
               Update
             </button>
+=======
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
           </div>
         ) : (
           <p className="text-gray-500">You cannot edit or delete this property.</p>
         )}
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
         <button
           className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-400"
           onClick={handleBack}
@@ -274,4 +287,8 @@ CardDetails.propTypes = {
   }),
 };
 
+<<<<<<< HEAD
 export default CardDetails;
+=======
+export default CardDetails;
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713

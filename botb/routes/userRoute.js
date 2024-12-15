@@ -12,6 +12,11 @@ router.delete("/dislikes/:id",dislikes);
 router.post("/allLikes", allLikes);
 router.get("/allusers", getusers);
 router.post("/get", getuser);
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
 
 
 

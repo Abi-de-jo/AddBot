@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import UploadImage from "./UploadImage";
 import UploadVideo from "../../UploadVideo";
+<<<<<<< HEAD
 const SecondComponent = () => {
+=======
+const SecondComponent = ({ setStep }) => {
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
   const [secondFormData, setSecondFormData] = useState({
     ...JSON.parse(localStorage.getItem("form1")), // Spread data from form1 directly
     dealType: "Rental",
@@ -46,10 +50,14 @@ const SecondComponent = () => {
   });
   const handlePublish = async () => {
     const email = localStorage.getItem("email");
+<<<<<<< HEAD
 
     if (Array.isArray(secondFormData.video)) {
       secondFormData.video = secondFormData.video[0] || ""; // Take the first video URL or set as empty string
     }
+=======
+  
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
     try {
       console.log(secondFormData.video,"3333333333333333333333333333333333333333")
       // Step 1: Send form data to your backend
@@ -66,6 +74,7 @@ const SecondComponent = () => {
       throw error;
     }
   
+<<<<<<< HEAD
      
   
 //     try {
@@ -247,6 +256,203 @@ const SecondComponent = () => {
 //       console.error("Error publishing details:", error);
 //       alert("Failed to publish details. Please try again.");
 //     }
+=======
+    const google_sheet_url =
+      "https://script.google.com/macros/s/AKfycbx5n3QIcwrRlGxEhJgLC_uf4z82S7sI8vHgivKri6FHYG24aySoNXASWjNLQVaga7Zf/exec";
+  
+    const formData = new FormData();
+    Object.entries({
+      ...secondFormData,
+      images: secondFormData.images.join(", "),
+      metro: secondFormData.metro.join(", "),
+      district: secondFormData.district.join(", "),
+      amenities: secondFormData.amenities.join(", "),
+      selectedAdditional: secondFormData.selectedAdditional?.join(", ") || "",
+    }).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+  
+    try {
+      const googleResponse = await fetch(google_sheet_url, {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (googleResponse.ok) {
+        const responseData = await googleResponse.json();
+        console.log("Data posted to Google Sheets successfully:", responseData);
+        alert("Details posted successfully to Google Sheets!");
+      } else {
+        console.error(
+          "Failed to post data to Google Sheets:",
+          googleResponse.statusText
+        );
+        alert("Failed to post details to Google Sheets.");
+      }
+    } catch (error) {
+      console.error("Error posting to Google Sheets:", error);
+      alert("An error occurred while posting to Google Sheets.");
+    }
+  
+    try {
+      const TELEGRAM_BOT_TOKEN = "7712916176:AAF15UqOplv1hTdJVxILWoUOEefEKjGJOso";
+      const TELEGRAM_CHAT_ID = "-4545005015";
+  
+      const uploadMediaToTelegram = async (media, chatId, botToken, message) => {
+        try {
+          const uploadedMedia = [];
+          const messageIdsToDelete = [];
+  
+          // Step 1: Upload images and videos individually
+          for (const item of media) {
+            const formData = new FormData();
+            formData.append("chat_id", chatId);
+            formData.append(
+              item.type === "photo" ? "photo" : "video",
+              await fetch(item.url).then((res) => res.blob())
+            );
+  
+            const response = await axios.post(
+              `https://api.telegram.org/bot${botToken}/send${
+                item.type === "photo" ? "Photo" : "Video"
+              }`,
+              formData
+            );
+  
+            const messageId = response.data?.result?.message_id;
+            const fileId =
+              item.type === "photo"
+                ? response.data?.result?.photo?.pop()?.file_id
+                : response.data?.result?.video?.file_id;
+  
+            if (fileId && messageId) {
+              uploadedMedia.push({
+                type: item.type, // Ensure the type is correct for Telegram
+                media: fileId,
+              });
+              messageIdsToDelete.push(messageId);
+            } else {
+              throw new Error("Failed to retrieve file_id or message_id");
+            }
+          }
+  
+          // Step 2: Send all media as a grid with the first captioned
+          if (uploadedMedia.length > 0) {
+            const mediaWithCaption = [
+              {
+                ...uploadedMedia[0],
+                caption: message,
+                parse_mode: "Markdown",
+              },
+              ...uploadedMedia.slice(1),
+            ];
+  
+            await axios.post(
+              `https://api.telegram.org/bot${botToken}/sendMediaGroup`,
+              {
+                chat_id: chatId,
+                media: mediaWithCaption,
+              }
+            );
+  
+            console.log(
+              "Media (images/videos) and message sent as a single chat to Telegram successfully!"
+            );
+          } else {
+            throw new Error("No media to send");
+          }
+  
+          // Step 3: Delete the individual media messages
+          for (const messageId of messageIdsToDelete) {
+            await axios.post(
+              `https://api.telegram.org/bot${botToken}/deleteMessage`,
+              {
+                chat_id: chatId,
+                message_id: messageId,
+              }
+            );
+          }
+  
+          console.log("Individual media messages deleted successfully!");
+        } catch (error) {
+          console.error(
+            "Error uploading or sending media and message to Telegram:",
+            error.response?.data || error.message
+          );
+        }
+      };
+  
+      // Prepare images and videos for Telegram
+      const media = [
+        ...secondFormData.images.map((url) => ({ type: "photo", url })),
+        ...(secondFormData.videos || []).map((url) => ({ type: "video", url })), // Videos should have type "video"
+      ];
+  
+      const formatAmenitiesInTwoColumns = (amenities) => {
+        const chunkedAmenities = [];
+        for (let i = 0; i < amenities.length; i += 2) {
+          chunkedAmenities.push(amenities.slice(i, i + 2));
+        }
+  
+        return chunkedAmenities
+          .map((row) =>
+            row.map((amenity) => `✅#${amenity.replace(/\s+/g, "")}`).join("  ")
+          )
+          .join("\n");
+      };
+  
+      const amenitiesFormatted = formatAmenitiesInTwoColumns(
+        secondFormData.amenities
+      );
+  
+      const message = `
+  #${secondFormData?.city}  #${secondFormData?.district} 🏢#${secondFormData?.metro} 
+📍 [${secondFormData.address}](${secondFormData.addressURL})
+  
+  #${secondFormData?.title} Apartment near 
+  Apartment for #${secondFormData?.type}✨ #${secondFormData?.residencyType}
+  
+  🏠 ${secondFormData.area} Sq.m | #${secondFormData?.floor}floor | #${secondFormData?.bathrooms}Bath
+  
+  ${amenitiesFormatted}
+  ${secondFormData?.parking >= 1 ? "✅ Parking" : ""} 
+  ${secondFormData.parking === 0 ? "❌ Parking" : ""}
+  
+  🐕 Pets: ${
+        secondFormData.additional === "PetsRestriction"
+          ? "#Allowed"
+          : "#NotAllowed"
+      }
+  ⏰ #${secondFormData?.termDuration === "1 month"
+          ? "1month"
+          : secondFormData?.termDuration === "6 months"
+          ? "6month"
+          : secondFormData?.termDuration === "12 months"
+          ? "12month"
+          : ""
+      }
+  💳 #${secondFormData?.paymentMethod}   
+  💰 ${secondFormData.price}${secondFormData.currency == "USD" ? "$" : "₾"} | Deposit ${secondFormData.price}${secondFormData.currency == "USD" ? "$" : "₾"}
+  0% Commission
+  #Price${secondFormData.price}
+  
+  👤 Contact: [@David_Tibelashvili]
+  📞 +995 599 20 67 16 
+  
+  ⭐ [Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)
+  
+  📸 [Instagram](https://www.instagram.com/rent_in_tbilisi?igsh=MWU5aWVxa3Fxd2dlbw==) 🌐 [FB](https://www.facebook.com/share/j6jBfExKXjgNVpVQ/) 🎥 [YouTube](https://www.youtube.com/@RENTINTBILISI)
+  `;
+  
+      await uploadMediaToTelegram(media, TELEGRAM_CHAT_ID, TELEGRAM_BOT_TOKEN, message);
+  
+      alert("Details published to Telegram successfully!");
+      setStep(1); // Navigate back to FirstComponent
+    } catch (error) {
+      console.error("Error publishing details:", error);
+      alert("Failed to publish details. Please try again.");
+    }
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
   };
   
    
@@ -261,7 +467,11 @@ const SecondComponent = () => {
   const handleVideoUpload = (uploadedVideos) => {
     setSecondFormData((prev) => ({
       ...prev,
+<<<<<<< HEAD
       video: uploadedVideos,  
+=======
+      videos: uploadedVideos, // Store the uploaded video URLs in state
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
     }));
   };
   
@@ -1006,6 +1216,7 @@ const SecondComponent = () => {
          
          
           <h3 className="text-lg font-semibold">Amenities</h3>
+<<<<<<< HEAD
         
         
           <div className="grid grid-cols-1 gap-4">
@@ -1054,6 +1265,45 @@ const SecondComponent = () => {
 
 
 
+=======
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {[
+              "Oven",
+              "Stove",
+              "Heater",
+              "Elevator",
+              "Balcony",
+              "Microwave",
+              "SmartTV",
+              "Dishwasher",
+              "ParkingPlace",
+              "Projector",
+              "VacuumCleaner",
+              "AirConditioner",
+              "WiFi",
+              "PlayStation",
+            ].map((option) => (
+              <button
+                key={option}
+                onClick={() =>
+                  setSecondFormData((prev) => ({
+                    ...prev,
+                    amenities: prev.amenities.includes(option)
+                      ? prev.amenities.filter((h) => h !== option)
+                      : [...prev.amenities, option],
+                  }))
+                }
+                className={`px-4 py-2 rounded-md ${
+                  secondFormData.amenities.includes(option)
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+>>>>>>> 9f26180c6a9f254a3848072cc9b365117cf52713
         </div>
 
         {/* Additional Section */}
