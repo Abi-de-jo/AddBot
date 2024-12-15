@@ -78,3 +78,38 @@ export const getAllLikes = async () => {
     console.log(error)
   }
 }
+
+export const getAllUsers = async () => {
+  try {
+    const response = await api.get("/user/allusers", {
+      timeout: 10 * 10000,
+    });
+    if (response.status === 400 || response.status === 500) {
+      throw response.data;
+    }
+    return response.data;
+  } catch (error) {
+    console.log("Something went wrong userall");
+    throw error;
+  }
+};
+
+
+
+
+
+export const getAllDraft = async () => {
+  console.log("Hiii")
+  try {
+    const response = await api.get("/residency/alldrafts", {
+      timeout: 10 * 10000,
+    });
+    if (response.status === 400 || response.status === 500) {
+      throw response.data;
+    }
+    return response.data;
+  } catch (error) {
+    console.log("Something went wrong ");
+    throw error;
+  }
+};

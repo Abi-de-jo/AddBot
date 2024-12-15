@@ -6,7 +6,8 @@ import { BiHeart } from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
 import axios from "axios";
 import { getAllLikes } from "../utils/api";
- 
+import { LoadScript } from "@react-google-maps/api";
+
 function Home() {
   const { data, isLoading, error } = useProperties(); // Fetch properties using the hook
   const [isMapView, setIsMapView] = useState(false); // Toggle between List and Map view
@@ -20,7 +21,7 @@ function Home() {
       if (email) {
         try {
           const likedProperties = await getAllLikes(); // Fetch liked properties
-           setFavorites(likedProperties); // Update favorites state
+          setFavorites(likedProperties); // Update favorites state
           console.log("Fetched liked properties:", likedProperties);
         } catch (error) {
           console.error("Error fetching liked properties", error);
@@ -35,6 +36,12 @@ function Home() {
   };
 
   const toggleFavorite = async (propertyId) => {
+    if (!email) {
+      alert("Please log in to access likes.");
+      navigate("/login"); // Redirect to login page
+      return;
+    }
+
     const isLiked = favorites.includes(propertyId);
 
     try {
@@ -57,6 +64,11 @@ function Home() {
     }
   };
 
+  const handleTouchEnd = (e, propertyId) => {
+    e.preventDefault(); // Prevent triggering multiple events
+    toggleFavorite(propertyId);
+  };
+
   if (isLoading) {
     return <p className="text-gray-600 text-center">Loading properties...</p>;
   }
@@ -66,6 +78,7 @@ function Home() {
   }
 
   return (
+    
     <div className="min-h-screen bg-gray-100 p-4">
       {/* Header Section */}
       <div className="flex justify-between items-center bg-white p-6 rounded-lg shadow-lg mb-6">
@@ -83,7 +96,12 @@ function Home() {
         {isMapView ? (
           // Map View
           <div>
-            <Map />
+
+<LoadScript googleMapsApiKey="AIzaSyCzQePlVTWMps35sLtoq4DT7PN5n5_xGbg">
+      {/* Your App Components */}
+      <Map />
+    </LoadScript>
+
           </div>
         ) : (
           // List View
@@ -123,33 +141,27 @@ function Home() {
                   </p>
                 </div>
 
-                {/* Buttons */}
-                <div className="flex justify-between items-center p-4 border-t border-gray-200">
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
+                {/* Favorite Icon */}
+                {email !== property.userEmail ? ( // Check if the property doesn't belong to the current user
+                  <div
+                    className="absolute bottom-4 right-4 cursor-pointer"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent triggering card click
-                      alert("Write functionality coming soon!");
+                      toggleFavorite(property.id);
                     }}
+                    onTouchEnd={(e) => handleTouchEnd(e, property.id)}
                   >
-                    Write
-                  </button>
-                </div>
-
-                {/* Favorite Icon */}
-                <div
-                  className="absolute bottom-4 right-4 cursor-pointer"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent triggering card click
-                    toggleFavorite(property.id);
-                  }}
-                >
-                  {favorites.includes(property.id) ? (
-                    <AiFillHeart color="red" size={30} className="animate-pulse" />
-                  ) : (
-                    <BiHeart color="gray" size={30} />
-                  )}
-                </div>
+                    {favorites.includes(property.id) ? (
+                      <AiFillHeart color="red" size={30} className="animate-pulse" />
+                    ) : (
+                      <BiHeart color="gray" size={30} />
+                    )}
+                  </div>
+                ) : (
+                  <div className="absolute bottom-4 right-4 text-gray-500">
+                    Owned
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -30,7 +30,7 @@ model Residency {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   images        String[]
   title         String?
-  video         String?
+  video         String
   address       String?
   metro         String[] @default([])
   district      String[] @default([])
@@ -45,7 +45,7 @@ model Residency {
   totalFloors   Int?
   area          Float?
   type          String?
-
+  paymentMethod String?
   parking       Int?
   balcony       Boolean?
   bathrooms     Int?

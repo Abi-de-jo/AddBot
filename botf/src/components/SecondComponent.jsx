@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import UploadImage from "./UploadImage";
 import UploadVideo from "../../UploadVideo";
-const SecondComponent = ({ setStep }) => {
+const SecondComponent = () => {
   const [secondFormData, setSecondFormData] = useState({
     ...JSON.parse(localStorage.getItem("form1")), // Spread data from form1 directly
     dealType: "Rental",
@@ -37,7 +37,6 @@ const SecondComponent = ({ setStep }) => {
     description: "",
     images: [],
     additional: [
-      "balcony",
       "PetsRestriction",
       "dishwasher",
       "oven",
@@ -47,8 +46,12 @@ const SecondComponent = ({ setStep }) => {
   });
   const handlePublish = async () => {
     const email = localStorage.getItem("email");
-  
+
+    if (Array.isArray(secondFormData.video)) {
+      secondFormData.video = secondFormData.video[0] || ""; // Take the first video URL or set as empty string
+    }
     try {
+      console.log(secondFormData.video,"3333333333333333333333333333333333333333")
       // Step 1: Send form data to your backend
       const res = await axios.post(
         "http://localhost:3000/api/residency/create",
@@ -63,201 +66,187 @@ const SecondComponent = ({ setStep }) => {
       throw error;
     }
   
-    const google_sheet_url =
-      "https://script.google.com/macros/s/AKfycbx5n3QIcwrRlGxEhJgLC_uf4z82S7sI8vHgivKri6FHYG24aySoNXASWjNLQVaga7Zf/exec";
+     
   
-    const formData = new FormData();
-    Object.entries({
-      ...secondFormData,
-      images: secondFormData.images.join(", "),
-      metro: secondFormData.metro.join(", "),
-      district: secondFormData.district.join(", "),
-      amenities: secondFormData.amenities.join(", "),
-      selectedAdditional: secondFormData.selectedAdditional?.join(", ") || "",
-    }).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
+//     try {
+//       const TELEGRAM_BOT_TOKEN = "7712916176:AAF15UqOplv1hTdJVxILWoUOEefEKjGJOso";
+//       const TELEGRAM_CHAT_ID = "-4545005015";
   
-    try {
-      const googleResponse = await fetch(google_sheet_url, {
-        method: "POST",
-        body: formData,
-      });
+//       const uploadMediaToTelegram = async (media, chatId, botToken, message) => {
+//         try {
+//           const uploadedMedia = [];
+//           const messageIdsToDelete = [];
   
-      if (googleResponse.ok) {
-        const responseData = await googleResponse.json();
-        console.log("Data posted to Google Sheets successfully:", responseData);
-        alert("Details posted successfully to Google Sheets!");
-      } else {
-        console.error(
-          "Failed to post data to Google Sheets:",
-          googleResponse.statusText
-        );
-        alert("Failed to post details to Google Sheets.");
-      }
-    } catch (error) {
-      console.error("Error posting to Google Sheets:", error);
-      alert("An error occurred while posting to Google Sheets.");
-    }
+//           // Step 1: Upload images and videos individually
+//           for (const item of media) {
+//             const formData = new FormData();
+//             formData.append("chat_id", chatId);
+//             formData.append(
+//               item.type === "photo" ? "photo" : "video",
+//               await fetch(item.url).then((res) => res.blob())
+//             );
   
-    try {
-      const TELEGRAM_BOT_TOKEN = "7712916176:AAF15UqOplv1hTdJVxILWoUOEefEKjGJOso";
-      const TELEGRAM_CHAT_ID = "-4545005015";
+//             const response = await axios.post(
+//               `https://api.telegram.org/bot${botToken}/send${
+//                 item.type === "photo" ? "Photo" : "Video"
+//               }`,
+//               formData
+//             );
   
-      const uploadMediaToTelegram = async (media, chatId, botToken, message) => {
-        try {
-          const uploadedMedia = [];
-          const messageIdsToDelete = [];
+//             const messageId = response.data?.result?.message_id;
+//             const fileId =
+//               item.type === "photo"
+//                 ? response.data?.result?.photo?.pop()?.file_id
+//                 : response.data?.result?.video?.file_id;
   
-          // Step 1: Upload images and videos individually
-          for (const item of media) {
-            const formData = new FormData();
-            formData.append("chat_id", chatId);
-            formData.append(
-              item.type === "photo" ? "photo" : "video",
-              await fetch(item.url).then((res) => res.blob())
-            );
+//             if (fileId && messageId) {
+//               uploadedMedia.push({
+//                 type: item.type, // Ensure the type is correct for Telegram
+//                 media: fileId,
+//               });
+//               messageIdsToDelete.push(messageId);
+//             } else {
+//               throw new Error("Failed to retrieve file_id or message_id");
+//             }
+//           }
   
-            const response = await axios.post(
-              `https://api.telegram.org/bot${botToken}/send${
-                item.type === "photo" ? "Photo" : "Video"
-              }`,
-              formData
-            );
+//           // Step 2: Send all media as a grid with the first captioned
+//           if (uploadedMedia.length > 0) {
+//             const mediaWithCaption = [
+//               {
+//                 ...uploadedMedia[0],
+//                 caption: message,
+//                 parse_mode: "Markdown",
+//               },
+//               ...uploadedMedia.slice(1),
+//             ];
   
-            const messageId = response.data?.result?.message_id;
-            const fileId =
-              item.type === "photo"
-                ? response.data?.result?.photo?.pop()?.file_id
-                : response.data?.result?.video?.file_id;
+//             await axios.post(
+//               `https://api.telegram.org/bot${botToken}/sendMediaGroup`,
+//               {
+//                 chat_id: chatId,
+//                 media: mediaWithCaption,
+//               }
+//             );
   
-            if (fileId && messageId) {
-              uploadedMedia.push({
-                type: item.type, // Ensure the type is correct for Telegram
-                media: fileId,
-              });
-              messageIdsToDelete.push(messageId);
-            } else {
-              throw new Error("Failed to retrieve file_id or message_id");
-            }
-          }
+//             console.log(
+//               "Media (images/videos) and message sent as a single chat to Telegram successfully!"
+//             );
+//           } else {
+//             throw new Error("No media to send");
+//           }
   
-          // Step 2: Send all media as a grid with the first captioned
-          if (uploadedMedia.length > 0) {
-            const mediaWithCaption = [
-              {
-                ...uploadedMedia[0],
-                caption: message,
-                parse_mode: "Markdown",
-              },
-              ...uploadedMedia.slice(1),
-            ];
+//           // Step 3: Delete the individual media messages
+//           for (const messageId of messageIdsToDelete) {
+//             await axios.post(
+//               `https://api.telegram.org/bot${botToken}/deleteMessage`,
+//               {
+//                 chat_id: chatId,
+//                 message_id: messageId,
+//               }
+//             );
+//           }
   
-            await axios.post(
-              `https://api.telegram.org/bot${botToken}/sendMediaGroup`,
-              {
-                chat_id: chatId,
-                media: mediaWithCaption,
-              }
-            );
+//           console.log("Individual media messages deleted successfully!");
+//         } catch (error) {
+//           console.error(
+//             "Error uploading or sending media and message to Telegram:",
+//             error.response?.data || error.message
+//           );
+//         }
+//       };
   
-            console.log(
-              "Media (images/videos) and message sent as a single chat to Telegram successfully!"
-            );
-          } else {
-            throw new Error("No media to send");
-          }
+//       // Prepare images and videos for Telegram
+//       const media = [
+//         ...secondFormData.images.map((url) => ({ type: "photo", url })),
+//         ...(secondFormData.video || []).map((url) => ({ type: "video", url })), // Videos should have type "video"
+//       ];
   
-          // Step 3: Delete the individual media messages
-          for (const messageId of messageIdsToDelete) {
-            await axios.post(
-              `https://api.telegram.org/bot${botToken}/deleteMessage`,
-              {
-                chat_id: chatId,
-                message_id: messageId,
-              }
-            );
-          }
+//       const formatAmenitiesInTwoColumns = (amenities) => {
+//         const chunkedAmenities = [];
+//         for (let i = 0; i < amenities.length; i += 2) {
+//           chunkedAmenities.push(amenities.slice(i, i + 2));
+//         }
   
-          console.log("Individual media messages deleted successfully!");
-        } catch (error) {
-          console.error(
-            "Error uploading or sending media and message to Telegram:",
-            error.response?.data || error.message
-          );
-        }
-      };
+//         return chunkedAmenities
+//           .map((row) =>
+//             row.map((amenity) => `✅#${amenity.replace(/\s+/g, "")}`).join("  ")
+//           )
+//           .join("\n");
+//       };
   
-      // Prepare images and videos for Telegram
-      const media = [
-        ...secondFormData.images.map((url) => ({ type: "photo", url })),
-        ...(secondFormData.videos || []).map((url) => ({ type: "video", url })), // Videos should have type "video"
-      ];
+//       const amenitiesFormatted = formatAmenitiesInTwoColumns(
+//         secondFormData.amenities
+//       );
   
-      const formatAmenitiesInTwoColumns = (amenities) => {
-        const chunkedAmenities = [];
-        for (let i = 0; i < amenities.length; i += 2) {
-          chunkedAmenities.push(amenities.slice(i, i + 2));
-        }
+//       const message = `
+//   #${secondFormData?.city}  #${secondFormData?.district} 🏢#${secondFormData?.metro} 
+// 📍 [${secondFormData.address}](${secondFormData.addressURL})
   
-        return chunkedAmenities
-          .map((row) =>
-            row.map((amenity) => `✅#${amenity.replace(/\s+/g, "")}`).join("  ")
-          )
-          .join("\n");
-      };
+//   #${secondFormData?.title} Apartment near 
+//   Apartment for #${secondFormData?.type}✨ #${secondFormData?.residencyType}
   
-      const amenitiesFormatted = formatAmenitiesInTwoColumns(
-        secondFormData.amenities
-      );
+//   🏠 ${secondFormData.area} Sq.m | #${secondFormData?.floor}floor | #${secondFormData?.bathrooms}Bath
   
-      const message = `
-  #${secondFormData?.city}  #${secondFormData?.district} 🏢#${secondFormData?.metro} 
-📍 [${secondFormData.address}](${secondFormData.addressURL})
+//   ${amenitiesFormatted}
+//   ${secondFormData?.parking >= 1 ? "✅ Parking" : ""} 
+//   ${secondFormData.parking === 0 ? "❌ Parking" : ""}
   
-  #${secondFormData?.title} Apartment near 
-  Apartment for #${secondFormData?.type}✨ #${secondFormData?.residencyType}
+//   🐕 Pets: ${
+//         secondFormData.additional === "PetsRestriction"
+//           ? "#Allowed"
+//           : "#NotAllowed"
+//       }
+//   ⏰ #${secondFormData?.termDuration === "1 month"
+//           ? "1month"
+//           : secondFormData?.termDuration === "6 months"
+//           ? "6month"
+//           : secondFormData?.termDuration === "12 months"
+//           ? "12month"
+//           : ""
+//       }
+//   💳 #${secondFormData?.paymentMethod}   
+//   💰 ${secondFormData.price}${secondFormData.currency == "USD" ? "$" : "₾"} | Deposit ${secondFormData.price}${secondFormData.currency == "USD" ? "$" : "₾"}
+//   0% Commission
+//  ${secondFormData.price >= 0 && secondFormData.price <= 300
+//     ? "#Price0to300"
+//     : secondFormData.price > 300 && secondFormData.price <= 500
+//     ? "#Price300to500"
+//     : secondFormData.price > 500 && secondFormData.price <= 700
+//     ? "#Price500to700"
+//     : secondFormData.price > 700 && secondFormData.price <= 900
+//     ? "#Price700to900"
+//     : secondFormData.price > 900 && secondFormData.price <= 1200
+//     ? "#Price900to1200"
+//     : secondFormData.price > 1200 && secondFormData.price <= 1500
+//     ? "#Price1200to1500"
+//     : secondFormData.price > 1500 && secondFormData.price <= 2000
+//     ? "#Price1500to2000"
+//     : secondFormData.price > 2000 && secondFormData.price <= 2500
+//     ? "#Price2000to2500"
+//     : secondFormData.price > 2500 && secondFormData.price <= 3000
+//     ? "#Price2500to3000"
+//     : secondFormData.price > 3000
+//     ? "PriceAbove3000"
+//     : ""}  
+
+    
+//   👤 Contact: [@David_Tibelashvili]
+//   📞 +995 599 20 67 16 
   
-  🏠 ${secondFormData.area} Sq.m | #${secondFormData?.floor}floor | #${secondFormData?.bathrooms}Bath
+//   ⭐ [Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)
   
-  ${amenitiesFormatted}
-  ${secondFormData?.parking >= 1 ? "✅ Parking" : ""} 
-  ${secondFormData.parking === 0 ? "❌ Parking" : ""}
+//   📸 [Instagram](https://www.instagram.com/rent_in_tbilisi?igsh=MWU5aWVxa3Fxd2dlbw==) 🌐 [FB](https://www.facebook.com/share/j6jBfExKXjgNVpVQ/) 🎥 [YouTube](https://www.youtube.com/@RENTINTBILISI)
+//   `;
   
-  🐕 Pets: ${
-        secondFormData.additional === "PetsRestriction"
-          ? "#Allowed"
-          : "#NotAllowed"
-      }
-  ⏰ #${secondFormData?.termDuration === "1 month"
-          ? "1month"
-          : secondFormData?.termDuration === "6 months"
-          ? "6month"
-          : secondFormData?.termDuration === "12 months"
-          ? "12month"
-          : ""
-      }
-  💳 #${secondFormData?.paymentMethod}   
-  💰 ${secondFormData.price}${secondFormData.currency == "USD" ? "$" : "₾"} | Deposit ${secondFormData.price}${secondFormData.currency == "USD" ? "$" : "₾"}
-  0% Commission
-  #Price${secondFormData.price}
+//       await uploadMediaToTelegram(media, TELEGRAM_CHAT_ID, TELEGRAM_BOT_TOKEN, message);
   
-  👤 Contact: [@David_Tibelashvili]
-  📞 +995 599 20 67 16 
-  
-  ⭐ [Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)
-  
-  📸 [Instagram](https://www.instagram.com/rent_in_tbilisi?igsh=MWU5aWVxa3Fxd2dlbw==) 🌐 [FB](https://www.facebook.com/share/j6jBfExKXjgNVpVQ/) 🎥 [YouTube](https://www.youtube.com/@RENTINTBILISI)
-  `;
-  
-      await uploadMediaToTelegram(media, TELEGRAM_CHAT_ID, TELEGRAM_BOT_TOKEN, message);
-  
-      alert("Details published to Telegram successfully!");
-      setStep(1); // Navigate back to FirstComponent
-    } catch (error) {
-      console.error("Error publishing details:", error);
-      alert("Failed to publish details. Please try again.");
-    }
+//       alert("Details published to Telegram successfully!");
+//       setStep(1); // Navigate back to FirstComponent
+//     } catch (error) {
+//       console.error("Error publishing details:", error);
+//       alert("Failed to publish details. Please try again.");
+//     }
   };
   
    
@@ -272,7 +261,7 @@ const SecondComponent = ({ setStep }) => {
   const handleVideoUpload = (uploadedVideos) => {
     setSecondFormData((prev) => ({
       ...prev,
-      videos: uploadedVideos, // Store the uploaded video URLs in state
+      video: uploadedVideos,  
     }));
   };
   
@@ -781,11 +770,11 @@ const SecondComponent = ({ setStep }) => {
 
           {/* Conditional UI based on selected term */}
           {secondFormData.term === "Long-term" ? (
-            <div className="space-y-4 mt-4">
+            <div className="space-y-5 mt-4">
               {/* Long-term specific fields */}
               <div className="flex gap-4">
                 <button
-                  className={`flex-1 px-4 py-2 rounded-md ${
+                  className={`flex-1 px-5 rounded-md ${
                     secondFormData.termDuration === "1 month"
                       ? "bg-blue-600 text-white"
                       : "bg-gray-200 text-gray-600"
@@ -1014,49 +1003,63 @@ const SecondComponent = ({ setStep }) => {
         </div>
 
         <div className="">
+         
+         
           <h3 className="text-lg font-semibold">Amenities</h3>
-          <div className="flex gap-2 mt-2 flex-wrap">
-            {[
-              "Oven",
-              "Stove",
-              "Heater",
-              "Elevator",
-              "Balcony",
-              "Microwave",
-              "SmartTV",
-              "Dishwasher",
-              "ParkingPlace",
-              "Projector",
-              "VacuumCleaner",
-              "AirConditioner",
-              "WiFi",
-              "PlayStation",
-            ].map((option) => (
-              <button
-                key={option}
-                onClick={() =>
-                  setSecondFormData((prev) => ({
-                    ...prev,
-                    amenities: prev.amenities.includes(option)
-                      ? prev.amenities.filter((h) => h !== option)
-                      : [...prev.amenities, option],
-                  }))
-                }
-                className={`px-4 py-2 rounded-md ${
-                  secondFormData.amenities.includes(option)
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-600"
-                }`}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+        
+        
+          <div className="grid grid-cols-1 gap-4">
+  {[
+    "Oven",
+    "Stove",
+    "Heater",
+    "Elevator",
+    "Balcony",
+    "Microwave",
+    "SmartTV",
+    "Dishwasher",
+    "ParkingPlace",
+    "Projector",
+    "VacuumCleaner",
+    "AirConditioner",
+    "WiFi",
+    "PlayStation",
+  ].map((option) => (
+    <div
+      key={option}
+      className="flex items-center justify-between p-3 border border-gray-300 rounded-lg shadow-sm bg-white"
+    >
+      <div className="text-gray-800 font-medium text-sm">
+        {option.replace(/([A-Z])/g, " $1")} {/* Adds spaces for camelCase */}
+      </div>
+      <label className="relative inline-flex items-center cursor-pointer">
+        <input
+          type="checkbox"
+          checked={secondFormData.amenities.includes(option)}
+          onChange={() =>
+            setSecondFormData((prev) => ({
+              ...prev,
+              amenities: prev.amenities.includes(option)
+                ? prev.amenities.filter((item) => item !== option)
+                : [...prev.amenities, option],
+            }))
+          }
+          className="sr-only peer"
+        />
+        <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-500 rounded-full peer-checked:bg-blue-600 peer-checked:before:translate-x-4 before:content-[''] before:absolute before:top-0.5 before:left-0.5 before:bg-white before:border before:rounded-full before:h-4 before:w-4 before:transition-all peer-checked:before:border-white"></div>
+      </label>
+    </div>
+  ))}
+</div>
+
+
+
         </div>
 
         {/* Additional Section */}
         <div>
           <h3 className="text-lg font-semibold mb-2">Additional Features</h3>
+         
           <div className="grid grid-cols-1 gap-4">
             {secondFormData.additional.map((item, index) => (
               <div
@@ -1096,6 +1099,8 @@ const SecondComponent = ({ setStep }) => {
               </div>
             ))}
           </div>
+
+
         </div>
 
         {/* Publish Button */}

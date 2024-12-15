@@ -3,20 +3,21 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-const API_BASE_URL = "http://localhost:3000/api"; // Replace with your backend base URL
+const API_BASE_URL = "https://add-bot-server.vercel.app/api"; // Replace with your backend base URL
 
 const CardDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
-   const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [editedCard, setEditedCard] = useState(location.state?.card || {});
 
-  
+  const email = localStorage.getItem("email");
+  const role = localStorage.getItem("role");
 
   const handleBack = () => {
     navigate(-1);
   };
-  
+
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -44,6 +45,19 @@ const CardDetails = () => {
       }
     }
   };
+  const handleUpdate = async () => {
+    if (window.confirm('Are you sure you want to Update this property?')) {
+      try {
+        await axios.put(`http://localhost:3000/api/residency/updateDate/${editedCard.id}`);
+        alert('Property Updated successfully!');
+        navigate(-1);
+      } catch (error) {
+        console.error('Error updating property:', error);
+        alert('Failed to update property. Please try again.');
+      }
+    }
+  };
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -52,7 +66,7 @@ const CardDetails = () => {
 
   if (!editedCard) {
     return (
-      <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white ">
+      <div className="p-6 border border-gray-300 rounded-md shadow-md bg-white">
         <h2 className="text-xl font-bold mb-4">No Card Selected</h2>
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
@@ -185,48 +199,59 @@ const CardDetails = () => {
               <li key={index} className="text-sm">{item}</li>
             ))
           ) : (
-            <p className="text-sm text-gray-500">No heating information</p>
+            <p className="text-sm text-gray-500">No additional information</p>
           )}
         </ul>
       </div>
 
-      {/* Additional Features */}
-     
       {/* Buttons */}
       <div className="p-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          {isEditing ? (
+        
+        
+        
+        {role ==="admin" || email==editedCard.userEmail ? (
+          <div className="flex items-center space-x-4">
+            {isEditing ? (
+              <button
+                className="px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600"
+                onClick={handleSave}
+              >
+                Save
+              </button>
+            ) : (
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
+                onClick={handleEdit}
+              >
+                Edit
+              </button>
+            )}
             <button
-              className="px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-600"
-              onClick={handleSave}
+              className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600"
+              onClick={handleDelete}
             >
-              Save
+              Delete
             </button>
-          ) : (
             <button
-              className="px-4 py-2 bg-blue-500 text-white rounded-md shadow hover:bg-blue-600"
-              onClick={handleEdit}
+              className="px-4 py-2 bg-yellow-500 text-white rounded-md shadow hover:bg-yellow-600"
+              onClick={handleUpdate}
             >
-              Edit
+              Update
             </button>
-          )}
-          <button
-            className="px-4 py-2 bg-red-500 text-white rounded-md shadow hover:bg-red-600"
-            onClick={handleDelete}
-          >
-            Delete
-          </button>
-        </div>
-        <div className="flex items-center space-x-4">
-          
-         
-          <button
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-400"
-            onClick={handleBack}
-          >
-            Back
-          </button>
-        </div>
+          </div>
+        ) : (
+          <p className="text-gray-500">You cannot edit or delete this property.</p>
+        )}
+
+
+
+
+        <button
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md shadow hover:bg-gray-400"
+          onClick={handleBack}
+        >
+          Back
+        </button>
       </div>
     </div>
   );
@@ -244,9 +269,9 @@ CardDetails.propTypes = {
     images: PropTypes.arrayOf(PropTypes.string),
     amenities: PropTypes.arrayOf(PropTypes.string),
     heating: PropTypes.arrayOf(PropTypes.string),
-    payment: PropTypes.string,
+    selectedAdditional: PropTypes.arrayOf(PropTypes.string),
+    userEmail: PropTypes.string,
   }),
 };
 
 export default CardDetails;
-

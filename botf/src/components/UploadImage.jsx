@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
-import { MdClose } from "react-icons/md"; // Import a close icon for delete
+import { MdClose } from "react-icons/md";
 import PropTypes from "prop-types";
 
 const UploadImage = ({ onImageUpdate }) => {
@@ -23,8 +23,11 @@ const UploadImage = ({ onImageUpdate }) => {
         widgetRef.current = cloudinaryRef.current.createUploadWidget(
           {
             cloudName: "dbandd0k7",
-            uploadPreset: "zf9wfsfi",
+            uploadPreset: "zf9wfsfi", // Separate preset for images
+            resourceType: "image", // Only allow images
             multiple: true,
+            maxFileSize: 10000000, // 10MB limit
+            allowedFormats: ["jpg", "png" , "jpeg"], // Restrict to image formats
           },
           (err, result) => {
             if (result.event === "success") {
@@ -39,7 +42,7 @@ const UploadImage = ({ onImageUpdate }) => {
     };
 
     loadCloudinary();
-  }, []);
+  }, [imageURLs, onImageUpdate]);
 
   return (
     <div className="flex flex-col items-center">
@@ -49,7 +52,7 @@ const UploadImage = ({ onImageUpdate }) => {
           onClick={() => widgetRef.current?.open()}
         >
           <AiOutlineCloudUpload className="text-blue-500 mb-2" size={50} />
-          <span className="text-sm text-gray-600">Click to upload or drag and drop images</span>
+          <span className="text-sm text-gray-600">Click to upload images</span>
         </div>
       ) : (
         <div className="grid grid-cols-4 gap-4 mt-4">
@@ -73,6 +76,12 @@ const UploadImage = ({ onImageUpdate }) => {
           ))}
         </div>
       )}
+      <button
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md"
+        onClick={() => widgetRef.current?.open()}
+      >
+        Add More Images
+      </button>
     </div>
   );
 };

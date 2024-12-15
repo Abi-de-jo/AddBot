@@ -22,18 +22,15 @@ const UploadVideo = ({ onVideoUpdate }) => {
         cloudinaryRef.current = window.cloudinary;
         widgetRef.current = cloudinaryRef.current.createUploadWidget(
           {
-            cloudName: "dbandd0k7", // Replace with your Cloudinary cloud name
-            uploadPreset: "zf9wfsfi", // Replace with your Cloudinary upload preset
-            resourceType: "video", // Specify "video" for video uploads
-            multiple: false, // Only allow one video
+            cloudName: "dbandd0k7",
+            uploadPreset: "xmmcvp1e", // Separate preset for videos
+            resourceType: "video", // Only allow videos
+            multiple: false, // Only one video
             maxFileSize: 30000000, // 30MB limit
-            allowedFormats: ["mp4", "mov", "avi"], // Restrict to common video formats
+            allowedFormats: ["mp4", "mov", "avi"], // Restrict to video formats
           },
           (err, result) => {
-            if (err) {
-              console.error("Cloudinary Upload Error:", err);
-            } else if (result.event === "success") {
-              console.log("Uploaded Video:", result.info);
+            if (result.event === "success") {
               const updatedVideos = [...videoURLs, result.info.secure_url];
               setVideoURLs(updatedVideos);
               onVideoUpdate(updatedVideos); // Notify parent component
@@ -55,9 +52,7 @@ const UploadVideo = ({ onVideoUpdate }) => {
           onClick={() => widgetRef.current?.open()}
         >
           <AiOutlineCloudUpload className="text-blue-500 mb-2" size={50} />
-          <span className="text-sm text-gray-600">
-            Click to upload or drag and drop video
-          </span>
+          <span className="text-sm text-gray-600">Click to upload a video</span>
         </div>
       ) : (
         <div className="relative border border-gray-300 rounded-lg overflow-hidden group">

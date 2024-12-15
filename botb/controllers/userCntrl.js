@@ -3,39 +3,74 @@ import { prisma } from "../lib/prisma.js";
 import bcrypt from "bcrypt";
 
 export const createUser = asyncHandler(async (req, res) => {
-  console.log("creating a admin");
-
   let { email, password } = req.body;
+
   try {
-    const adminExists = await prisma.user.findUnique({
+    const userExists = await prisma.user.findUnique({
       where: { email: email },
     });
-    if (adminExists) {
-      const isValidPassword = await bcrypt.compare(password, adminExists.password);
+
+    const isAgent = email.includes("geomap");
+
+    if (userExists) {
+      const isValidPassword = await bcrypt.compare(password, userExists.password);
+
       if (!isValidPassword) {
         return res
           .status(401)
-          .json({ message: "Failed to Login Invalid Password" });
+          .json({ message: "Failed to login: Invalid password" });
       } else {
-        const { password: userpassword, ...adminInfo } = adminExists;
-        res.status(200).json({ adminInfo, message: "Loged in succesfully" });
+        const { password: userPassword, ...userInfo } = userExists;
+
+        if(email == "david@gmail.com") {
+          return res.status(200).json({
+            message: "Admin",
+            admin: userInfo,
+          });
+        }
+
+        if (isAgent) {
+          return res.status(200).json({
+            message: "Agent",
+            agent: userInfo,
+          });
+        }
+
+        return res.status(200).json({
+          message: "Logged in successfully",
+          user: userInfo,
+        });
       }
     }
 
-    if (!adminExists) {
+    if (!userExists) {
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const admin = await prisma.user.create({
+      const newUser = await prisma.user.create({
         data: { email: email, password: hashedPassword },
       });
+      if (email == "david@gmail.com") {
+        return res.status(201).json({
+          message: "Admin",
+          admin: newUser,
+        });
+      }
 
-      res.send({
-        message: "admin registered successfully",
-        admin: admin,
+      if (isAgent) {
+        return res.status(201).json({
+          message: "Agent",
+          agent: newUser,
+        });
+      }
+
+      return res.status(201).json({
+        message: "User registered successfully",
+        user: newUser,
       });
-    } else res.status(201).send({ message: "admin already registered" });
+    }
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    res.status(500).json({ message: "An error occurred" });
   }
 });
 
