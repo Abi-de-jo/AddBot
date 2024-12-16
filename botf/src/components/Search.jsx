@@ -369,20 +369,26 @@ function Search() {
       </div>
 
       {/* Buttons */}
-      <div className="sticky bottom-0 bg-white border-t pt-3 flex justify-between">
-        <button
-          onClick={clearFilters}
-          className="w-1/2 bg-gray-300 px-4 py-2 rounded-l-lg text-gray-700 hover:bg-gray-400"
-        >
-          Clear
-        </button>
-        <button
-          onClick={() => setIsFilterPopupOpen(false)}
-          className="w-1/2 bg-blue-500 px-4 py-2 rounded-r-lg text-white hover:bg-blue-600"
-        >
-          Apply
-        </button>
-      </div>
+       <div className="sticky bottom-0 bg-white border-t pt-3 flex justify-between">
+              <button
+                onClick={() => setIsFilterPopupOpen(false)}
+                className="w-1/3 bg-gray-300 px-4 py-2 rounded-l-lg text-gray-700 hover:bg-gray-400"
+              >
+                Back
+              </button>
+              <button
+                onClick={clearFilters}
+                className="w-1/3 bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+              >
+                Clear
+              </button>
+              <button
+                onClick={() => setIsFilterPopupOpen(false)}
+                className="w-1/3 bg-blue-500 px-4 py-2 rounded-r-lg text-white hover:bg-blue-600"
+              >
+                Apply
+              </button>
+            </div>
     </div>
   </div>
 )}
