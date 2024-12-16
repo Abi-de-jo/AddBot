@@ -47,8 +47,7 @@ const SecondComponent = () => {
     additional: [
       "PetsRestriction",
       "dishwasher",
-      "oven",
-      "bathtub",
+       "bathtub",
       "twoOrMoreBathroom",
     ],
   });
