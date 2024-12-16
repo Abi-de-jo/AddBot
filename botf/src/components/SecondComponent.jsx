@@ -114,7 +114,7 @@ const SecondComponent = () => {
     <div className="min-h-screen bg-gray-100 p-4 mb-5">
        {isConfettiActive && <Confetti width={window.innerWidth} height={window.innerHeight} />}
         {message && <p className="text-green-600 text-center mt-4">{message}</p>}
-      <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
+      <div className="bg-white p-6 rounded-lg shadow-lg space-y-6 mb-6">
         {/* Deal Type */}
         <div>
           <h3 className="text-lg font-semibold">Deal Type</h3>
@@ -907,7 +907,7 @@ const SecondComponent = () => {
                 key={index}
                 className="flex items-center justify-between p-2 border border-gray-300 rounded-md"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-3">
                   <span className="text-gray-800 font-medium text-sm">
                     {item.replace(/([A-Z])/g, " $1").toUpperCase()}
                   </span>
@@ -953,7 +953,7 @@ const SecondComponent = () => {
         <div className="text-center">
           <button
             onClick={handlePublish}
-            className="px-6 py-2  -mt-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700"
+            className="px-6 py-2 mb-7 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700"
           >
             Publish
           </button>
