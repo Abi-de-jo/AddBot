@@ -3,7 +3,15 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import UploadImage from "./UploadImage";
 import UploadVideo from "../../UploadVideo";
+import { useNavigate } from "react-router-dom";
+import Confetti from "react-confetti"; // Ensure you have this installed
+
 const SecondComponent = () => {
+
+  const navigate = useNavigate()
+   const [isConfettiActive, setIsConfettiActive] = useState(false); // State to toggle confetti
+  const [message, setMessage] = useState(""); // State for the success message
+
   const [secondFormData, setSecondFormData] = useState({
     ...JSON.parse(localStorage.getItem("form1")), // Spread data from form1 directly
     dealType: "Rental",
@@ -39,8 +47,7 @@ const SecondComponent = () => {
     additional: [
       "PetsRestriction",
       "dishwasher",
-      "oven",
-      "bathtub",
+       "bathtub",
       "twoOrMoreBathroom",
     ],
   });
@@ -60,6 +67,19 @@ const SecondComponent = () => {
           secondFormData,
         }
       );
+       
+       setIsConfettiActive(true);
+    setMessage("Successfully created! Waiting for Agent Response...");
+    console.log("Backend Response:", res);
+
+    // Scroll to the top
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smooth scrolling
+    });
+
+    // Automatically stop confetti after 5 seconds
+    setTimeout(() => setIsConfettiActive(false), 5000);
       console.log("Backend Response:", res);
     } catch (error) {
       console.error("Error sending data to backend:", error);
@@ -91,7 +111,9 @@ const SecondComponent = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-4 mb-5">
-      <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
+       {isConfettiActive && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+        {message && <p className="text-green-600 text-center mt-4">{message}</p>}
+      <div className="bg-white p-6 rounded-lg shadow-lg space-y-6 mb-6">
         {/* Deal Type */}
         <div>
           <h3 className="text-lg font-semibold">Deal Type</h3>
@@ -839,7 +861,6 @@ const SecondComponent = () => {
     "Balcony",
     "Microwave",
     "SmartTV",
-    "Dishwasher",
     "ParkingPlace",
     "Projector",
     "VacuumCleaner",
@@ -878,18 +899,15 @@ const SecondComponent = () => {
 
         </div>
 
-        {/* Additional Section */}
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Additional Features</h3>
-         
+                  <div>       
           <div className="grid grid-cols-1 gap-4">
             {secondFormData.additional.map((item, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-2 border border-gray-300 rounded-md"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-gray-800 font-medium text-sm">
                     {item.replace(/([A-Z])/g, " $1").toUpperCase()}
                   </span>
                 </div>
@@ -925,18 +943,23 @@ const SecondComponent = () => {
 
         </div>
 
+        
+
+
+        </div>
+
         {/* Publish Button */}
         <div className="text-center">
           <button
             onClick={handlePublish}
-            className="px-6 py-2  -mt-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700"
+            className="px-6 py-2 mb-7 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700"
           >
             Publish
           </button>
-        </div>
+
+          </div>
       </div>
-    </div>
-  );
+   );
 };
 
 SecondComponent.propTypes = {
