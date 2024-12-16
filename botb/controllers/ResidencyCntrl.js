@@ -1,41 +1,34 @@
-import asyncHandler from "express-async-handler";
+ import asyncHandler from "express-async-handler";
 import { prisma } from "../lib/prisma.js";
 
 export const createResidency = asyncHandler(async (req, res) => {
-  const residency = await prisma.residency.create({
-    data: {
-      title,
-      address,
-      metro,
-      district,
-      price,
-      selectedAdditional,
-      discount,
-      commission,
-      propertyType,
-      residencyType,
-      rooms,
-      termDuration,
-      term,
-      bathrooms,
-      floor,
-      totalFloors,
-      area,
-      type,
-      parking,
-      paymentMethod,
-      city,
-      balcony,
-      amenities,
-      description,
-      paymentMethod,
-      heating,
-      video,
-      status: "draft",
-      images: imageArray,
-      userEmail, // Relates the residency to the user via userEmail
-    },
-  });
+  const {
+    title,
+    address,
+    metro,
+    district,
+    price,
+    discount,
+    commission,
+    propertyType,
+    selectedAdditional,
+    residencyType,
+    termDuration,
+    term,
+    rooms,
+    city,
+    area,
+    type,
+    parking,
+    bathrooms,
+    floor,
+    totalFloors,
+    balcony,
+    amenities,
+    description,
+    video,
+    images, // Ensure this is an array
+  } = req.body.secondFormData;
 
   const userEmail = req.body.email;
 
@@ -64,7 +57,6 @@ export const createResidency = asyncHandler(async (req, res) => {
         commission,
         propertyType,
         residencyType,
-        heating,
         rooms,
         termDuration,
         term,
@@ -72,14 +64,12 @@ export const createResidency = asyncHandler(async (req, res) => {
         floor,
         totalFloors,
         area,
-        heating,
         type,
         parking,
         city,
         balcony,
         amenities,
         description,
-        paymentMethod,
         video,
         status: "draft",
         images: imageArray,
@@ -125,11 +115,10 @@ export const getAllAgentDraftResidencies = asyncHandler(async (req, res) => {
         createdAt: "desc",
       },
     });
-  
 
     const geomapDrafts = drafts.filter(draft => draft.userEmail?.includes("geomap@gmail.com"));
-console.log(geomapDrafts)
-    res.json( geomapDrafts);
+
+    res.json({ geomapDrafts});
   } catch (err) {
     throw new Error(err.message);
   }
@@ -143,11 +132,10 @@ export const getAllOwnerDraftResidencies = asyncHandler(async (req, res) => {
         createdAt: "desc",
       },
     });
-     
-    
+
     const otherDrafts = drafts.filter(draft => !draft.userEmail?.includes("geomap@gmail.com"));
-console.log(otherDrafts,"llllllllllllllll")
-    res.json(otherDrafts);
+
+    res.json({ otherDrafts});
   } catch (err) {
     throw new Error(err.message);
   }
@@ -189,8 +177,7 @@ export const updateResidency = asyncHandler(async (req, res) => {
   const data = req.body; // Property data from frontend
   console.log(req.body);
 
-
-  try {
+ try {
     const residency = await prisma.residency.update({
       where: { id: id },
       data: {
