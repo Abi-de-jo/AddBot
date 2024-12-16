@@ -123,19 +123,7 @@ const AdminEmail = () => {
         </h2>
         {filteredProperties.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
-            {filteredProperties.map((property) => (
-              <div
-                onClick={() => handleCardClick(property)}
-                key={property.id}
-                className="flex p-4 bg-gray-50 border border-gray-200 rounded-md shadow hover:shadow-lg transition transform hover:scale-105 cursor-pointer"
-              >
-                {/* Left: Image */}
-              
-
-                {/* Right: Details */}
-              
-              </div>
-            ))}
+            
           </div>
         ) : (
           <p className="text-gray-500 text-center">No drafts available.</p>
