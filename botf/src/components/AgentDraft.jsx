@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { getAllDraft } from "../utils/api";
+import { getAllDraftAgent } from "../utils/api";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa"; // Import icons
 import axios from "axios";
 
-function Draft() {
+function AgentDraft() {
   const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,7 +11,7 @@ function Draft() {
   useEffect(() => {
     const fetchDrafts = async () => {
       try {
-        const data = await getAllDraft();
+        const data = await getAllDraftAgent();
         setDrafts(data);
       } catch (err) {
         setError("Failed to fetch drafts. Please try again later.",err);
@@ -324,4 +324,4 @@ ${selectedDraft.parking === 0 ? "❌ Parking" : ""}
   );
 }
 
-export default Draft;
+export default AgentDraft;

@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ setStep }) => {
   const [email, setEmail] = useState('');
+  const [username, setusername] = useState('');
+  const [teleNumber, setteleNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(''); // To display error messages
   const navigate = useNavigate();
@@ -21,6 +23,8 @@ const LoginForm = ({ setStep }) => {
     try {
       const response = await axios.post(`https://add-bot-server.vercel.app/api/user/register`, {
         email,
+        username,
+        teleNumber,
         password,
       });
 
@@ -51,6 +55,44 @@ const LoginForm = ({ setStep }) => {
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold text-center text-blue-600 mb-6">Login</h1>
         <form onSubmit={handleLogin} className="space-y-6">
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+              UserName
+            </label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setusername(e.target.value)}
+               className={`w-full px-4 py-2 border ${
+                error && !username ? 'border-red-500' : 'border-gray-300'
+              } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+              placeholder="Enter your Name"
+            />
+            {error && !username && (
+              <p className="text-sm text-red-500 mt-1">Email is required.</p>
+            )}
+          </div>
+
+
+          <div>
+            <label htmlFor="teleNumber" className="block text-sm font-medium text-gray-700 mb-1">
+              teleNumber
+            </label>
+            <input
+              id="teleNumber"
+              type="teleNumber"
+              value={teleNumber}
+              onChange={(e) => setteleNumber(e.target.value)}
+               className={`w-full px-4 py-2 border ${
+                error && !teleNumber ? 'border-red-500' : 'border-gray-300'
+              } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+              placeholder="Enter your teleNumber"
+            />
+            {error && !teleNumber && (
+              <p className="text-sm text-red-500 mt-1">teleNumber is required.</p>
+            )}
+          </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -90,7 +132,7 @@ const LoginForm = ({ setStep }) => {
               <p className="text-sm text-red-500 mt-1">{error}</p>
             )}
           </div>
-
+             
           {error && email && password.length >= 6 && (
             <p className="text-sm text-red-500 mt-1">{error}</p>
           )}

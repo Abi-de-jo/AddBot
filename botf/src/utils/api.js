@@ -97,18 +97,32 @@ export const getAllUsers = async () => {
 
 
 
-
 export const getAllDraft = async () => {
   console.log("Hiii")
   try {
-    const response = await api.get("/residency/alldrafts", {
+    const response = await api.get("/residency/allownerdrafts", {
       timeout: 10 * 10000,
     });
     if (response.status === 400 || response.status === 500) {
       throw response.data;
     }
     return response.data;
-  } catch (error) {
+  }  catch (error) {
+    console.log("Something went wrong ");
+    throw error;
+  }
+};
+export const getAllDraftAgent = async () => {
+  console.log("Hiii")
+  try {
+    const response = await api.get("/residency/allagentdrafts", {
+      timeout: 10 * 10000,
+    });
+    if (response.status === 400 || response.status === 500) {
+      throw response.data;
+    }
+    return response.data;
+  }  catch (error) {
     console.log("Something went wrong ");
     throw error;
   }

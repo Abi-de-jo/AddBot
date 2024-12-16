@@ -13,6 +13,8 @@ import CardDetails from "./components/Carddetails";
 import Draft from "./components/Draft";
 import Dashboard from "./components/Dashboard";
 import AdminEmail from "./components/adminEmail";
+import AllAgents from "./components/AllAgents";
+import AgentDraft from "./components/AgentDraft";
 
 const App = () => {
   const [step, setStep] = useState(0); // Manages step state for the application
@@ -37,7 +39,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
 
-            {/* Free Access Pages */}
+            {/* Public Access Pages */}
             <Route path="/search" element={<Search />} />
             <Route path="/ads" element={<SecondComponent setStep={setStep} />} />
 
@@ -63,7 +65,9 @@ const App = () => {
             />
             <Route
               path="/card/:cardId"
-              element={isAuthenticated ? <CardDetails /> : <Navigate to="/login" />}
+              element={
+                isAuthenticated ? <CardDetails /> : <Navigate to="/login" />
+              }
             />
             <Route
               path="/dashboard"
@@ -73,6 +77,16 @@ const App = () => {
               path="/draft"
               element={isAuthenticated ? <Draft /> : <Navigate to="/login" />}
             />
+
+            {/* Admin Routes */}
+            {role === "admin" && (
+              <>
+                <Route path="/owner-draft" element={<Draft />} />
+                <Route path="/agent-draft" element={<AgentDraft />} />
+                <Route path="/analytics" element={<Dashboard />} />
+                <Route path="/agents-list" element={<AllAgents />} />
+              </>
+            )}
 
             {/* Conditional Rendering for Steps */}
             <Route

@@ -14,9 +14,12 @@ datasource db {
 }
 
 model User {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  email       String      @unique
-  password    String
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  username   String?
+  teleNumber String?
+  email      String @unique
+  password   String
+
   residencies Residency[] @relation("UserResidencies")
 
   createdAt         DateTime @default(now())
