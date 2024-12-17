@@ -29,18 +29,16 @@ export const createUser = asyncHandler(async (req, res) => {
         //       message: "Agent",
         //       agent: userExists,
         //     });
-       return res.status(200).json({
-          "message": "Logged in successfully sheiklovws"
-         });
+       return res.status(200);
           }
 
     
     
 
-        return res.status(200).json({
-          message: "Logged in successfully",
-          user: userExists,
-        });
+        // return res.status(200).json({
+        //   message: "Logged in successfully",
+        //   user: userExists,
+        // });
       }
 
     if (!userExists) {
