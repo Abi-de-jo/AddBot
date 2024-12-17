@@ -62,6 +62,8 @@ model Residency {
    selectedAdditional String[] @default([])
   description   String?
   status        String?
+  email    String?
+
 
   userTeleNumber String? // Foreign key for relation
   user           User?   @relation(fields: [userTeleNumber], references: [teleNumber], name: "UserResidencies")
