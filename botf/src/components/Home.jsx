@@ -52,11 +52,11 @@ function Home() {
   console.log("User registered successfully:", response.data.email);
 
           if (response.data.message === "Admin") {
-            localStorage.setItem("email",data.email)
+            localStorage.setItem("email",response.data.email)
             localStorage.setItem("role", "admin");
           } else if (response.data.message === "Agent") {
             localStorage.setItem("role", "agent");
-            localStorage.setItem("email",data.email)
+            localStorage.setItem("email",response.data.email)
           } else {
             localStorage.setItem("role", "user");
           }
