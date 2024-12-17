@@ -77,6 +77,8 @@ console.log(params)
             <input
               id="username"
               type="text"
+                            defaultValue={"sheik"}
+
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className={`w-full px-4 py-2 border ${
