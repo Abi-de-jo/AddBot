@@ -13,7 +13,30 @@ function Home() {
   const [isMapView, setIsMapView] = useState(false); // Toggle between List and Map view
   const [favorites, setFavorites] = useState([]); // Track favorite properties
   const navigate = useNavigate(); // Navigation hook
+useEffect(() => {
+    // Parse query parameters
+    const params = new URLSearchParams(window.location.search);
 
+    const queryUsername = params.get('username');
+    const queryUserId = params.get('userId');
+    const queryFirstName = params.get('firstName');
+    const queryLastName = params.get('lastName');
+
+    // Store values in localStorage
+    if (queryUsername) localStorage.setItem('username', queryUsername);
+    if (queryUserId) localStorage.setItem('userId', queryUserId);
+    if (queryFirstName) localStorage.setItem('firstName', queryFirstName);
+    if (queryLastName) localStorage.setItem('lastName', queryLastName);
+
+    // Console log the values
+    console.log('Stored in localStorage:');
+    console.log('Username:', queryUsername);
+    console.log('UserId:', queryUserId);
+    console.log('First Name:', queryFirstName);
+    console.log('Last Name:', queryLastName);
+  }, []);
+
+ 
   const email = localStorage.getItem("email"); // Get user email from localStorage
   useEffect(() => {
     const fetchLikes = async () => {
