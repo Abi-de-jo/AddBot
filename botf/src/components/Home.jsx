@@ -39,7 +39,7 @@ function Home() {
     });
 
     // Register user automatically if values exist
-     const registerUser = async () => {
+    const registerUser = async () => {
       try {
         if (queryUsername || queryUserId) {
           const response = await axios.post("https://add-bot-server.vercel.app/api/user/register", {
@@ -47,7 +47,7 @@ function Home() {
             surname: queryLastName || "aa",
             teleNumber: queryUserId || "",
           });
- 
+
           console.log("User registered successfully:", response.data.message);
 
           if (response.data.message === "Admin") {
@@ -75,7 +75,7 @@ function Home() {
       if (email) {
         try {
           const likedProperties = await getAllLikes();
-          setFavorites(likedProperties);
+          setFavorites(likedProperties || []); // Ensure favorites is an array
           console.log("Fetched liked properties:", likedProperties);
         } catch (error) {
           console.error("Error fetching liked properties:", error);
@@ -93,7 +93,7 @@ function Home() {
       return;
     }
 
-    const isLiked = favorites.includes(propertyId);
+    const isLiked = favorites?.includes(propertyId);
     try {
       if (isLiked) {
         await axios.delete(`https://add-bot-server.vercel.app/api/user/dislikes/${propertyId}`, {
@@ -133,7 +133,7 @@ function Home() {
           </LoadScript>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-            {data.map((property) => (
+            {data?.map((property) => (
               <div
                 key={property.id}
                 className="flex flex-col bg-gray-50 border rounded-md shadow cursor-pointer relative"
@@ -155,7 +155,7 @@ function Home() {
                     toggleFavorite(property.id);
                   }}
                 >
-                  {favorites.includes(property.id) ? (
+                  {favorites?.includes(property.id) ? (
                     <AiFillHeart color="red" size={30} />
                   ) : (
                     <BiHeart color="gray" size={30} />
