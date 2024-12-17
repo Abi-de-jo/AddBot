@@ -1,27 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ setStep }) => {
-   const [username, setusername] = useState('');
-  const [surname, setsurname] = useState('');
-  const [teleNumber, setteleNumber] = useState('');
-   const [error, setError] = useState(''); // To display error messages
+  const [username, setUsername] = useState('');
+  const [surname, setSurname] = useState('');
+  const [teleNumber, setTeleNumber] = useState('');
+  const [userId, setUserId] = useState(''); // To store userId
+  const [error, setError] = useState(''); // To display error messages
   const navigate = useNavigate();
+
+  // Parse query parameters from the URL on component load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const queryUsername = params.get('username');
+    const queryUserId = params.get('userId');
+    const queryFirstName = params.get('firstName');
+    const queryLastName = params.get('lastName');
+console.log(queryFirstName)
+console.log(params)
+
+    // Pre-fill form fields
+    if (queryUsername) setUsername(queryUsername);
+    if (queryFirstName && queryLastName) setSurname(`${queryFirstName} ${queryLastName}`);
+    if (queryUserId) setUserId(queryUserId);
+  },[]);
+
+ 
 
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     setError(''); // Reset error message
 
-    
-
     try {
+      console.log(surname, username, teleNumber, userId, 'Details for login');
+
       const response = await axios.post(`https://add-bot-server.vercel.app/api/user/register`, {
         surname,
-                username,
+        username,
         teleNumber,
-       });
+        userId,
+      });
 
       console.log('User logged in successfully:', response.data.message);
 
@@ -58,16 +78,13 @@ const LoginForm = ({ setStep }) => {
               id="username"
               type="text"
               value={username}
-              onChange={(e) => setusername(e.target.value)}
-               className={`w-full px-4 py-2 border ${
+              onChange={(e) => setUsername(e.target.value)}
+              className={`w-full px-4 py-2 border ${
                 error && !username ? 'border-red-500' : 'border-gray-300'
               } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
               placeholder="Enter your Name"
               required
             />
-            {error && !username && (
-              <p className="text-sm text-red-500 mt-1">Email is required.</p>
-            )}
           </div>
           <div>
             <label htmlFor="surname" className="block text-sm font-medium text-gray-700 mb-1">
@@ -77,43 +94,30 @@ const LoginForm = ({ setStep }) => {
               id="surname"
               type="text"
               value={surname}
-              onChange={(e) => setsurname(e.target.value)}
-               className={`w-full px-4 py-2 border ${
+              onChange={(e) => setSurname(e.target.value)}
+              className={`w-full px-4 py-2 border ${
                 error && !surname ? 'border-red-500' : 'border-gray-300'
               } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-              placeholder="Enter your Surname "
+              placeholder="Enter your Surname"
               required
             />
-            {error && !surname && (
-              <p className="text-sm text-red-500 mt-1">Email is required.</p>
-            )}
           </div>
-
-
           <div>
             <label htmlFor="teleNumber" className="block text-sm font-medium text-gray-700 mb-1">
               Telegram Number
             </label>
             <input
               id="teleNumber"
-              type="teleNumber"
+              type="text"
               value={teleNumber}
-              onChange={(e) => setteleNumber(e.target.value)}
-               className={`w-full px-4 py-2 border ${
+              onChange={(e) => setTeleNumber(e.target.value)}
+              className={`w-full px-4 py-2 border ${
                 error && !teleNumber ? 'border-red-500' : 'border-gray-300'
               } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-              placeholder="Enter your teleNumber"
+              placeholder="Enter your Telegram Number"
               required
             />
-            {error && !teleNumber && (
-              <p className="text-sm text-red-500 mt-1">teleNumber is required.</p>
-            )}
           </div>
-          
-
-       
-             
-         
           <div>
             <button
               type="submit"
