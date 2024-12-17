@@ -20,14 +20,14 @@ export const createUser = asyncHandler(async (req, res) => {
           if(userExists.email.includes("david")) {
             return res.status(200).json({
               message: "Admin",
-              admin: createUser,
+              admin: userExists,
             });
           }
   
           if (isAgent) {
             return res.status(200).json({
               message: "Agent",
-              agent: createUser,
+              agent: userExists,
             });
           }
 
@@ -36,7 +36,7 @@ export const createUser = asyncHandler(async (req, res) => {
 
         return res.status(200).json({
           message: "Logged in successfully",
-          user: createUser,
+          user: userExists,
         });
       }
 
