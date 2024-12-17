@@ -3,22 +3,20 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import UploadImage from "./UploadImage";
 import UploadVideo from "../../UploadVideo";
-import { useNavigate } from "react-router-dom";
-import Confetti from "react-confetti"; // Ensure you have this installed
-
+ import Confetti from "react-confetti"; // Ensure you have this installed
+ 
 const SecondComponent = () => {
-
-  const navigate = useNavigate()
-   const [isConfettiActive, setIsConfettiActive] = useState(false); // State to toggle confetti
+ 
+    const [isConfettiActive, setIsConfettiActive] = useState(false); // State to toggle confetti
   const [message, setMessage] = useState(""); // State for the success message
 
   const [secondFormData, setSecondFormData] = useState({
     ...JSON.parse(localStorage.getItem("form1")), // Spread data from form1 directly
     dealType: "Rental",
-    rooms: 1,
-    size: 0,
+    rooms: "",
+    size: "",
     floor: "",
-    totalFloors: 0,
+    totalFloors: "",
     termDuration: "",
     address: JSON.parse(localStorage.getItem("form1"))?.address || "",
     addressURL:"",
@@ -27,7 +25,7 @@ const SecondComponent = () => {
     price: null,
     currency: "USD",
     commission: null,
-    deposit: 0,
+    deposit: "",
     paymentMethod: "FirstDeposit",
     metro: [],
     district: [],
@@ -35,11 +33,12 @@ const SecondComponent = () => {
     video: "",
     propertyType: "",
     residencyType: "",
-    discount: 0,
-    area: 0,
+    pussy:"",
+    discount: "",
+    area: "",
     type: "",
-    parking: 0,
-    bathrooms: 0,
+    parking: "",
+    bathrooms: "",
     amenities: [],
     heating: [],
     description: "",
@@ -51,19 +50,20 @@ const SecondComponent = () => {
       "twoOrMoreBathroom",
     ],
   });
+
+  const role = localStorage.getItem("role")
   const handlePublish = async () => {
-    const email = localStorage.getItem("email");
+    const teleNumber = localStorage.getItem("teleNumber");
 
     if (Array.isArray(secondFormData.video)) {
       secondFormData.video = secondFormData.video[0] || ""; // Take the first video URL or set as empty string
     }
     try {
       console.log(secondFormData.video,"3333333333333333333333333333333333333333")
-      // Step 1: Send form data to your backend
-      const res = await axios.post(
+       const res = await axios.post(
         "https://add-bot-server.vercel.app/api/residency/create",
         {
-          email,
+          teleNumber,
           secondFormData,
         }
       );
@@ -84,12 +84,7 @@ const SecondComponent = () => {
     } catch (error) {
       console.error("Error sending data to backend:", error);
       throw error;
-    }
-  
-     
-  
- 
-  };
+    }}
   
    
     const handleImageUpdate = (imageURLs) => {
@@ -500,13 +495,18 @@ const SecondComponent = () => {
   <UploadImage onImageUpdate={handleImageUpdate} />
 </div>
 
-<div>
+{/* //now changed */}
+
+{role !=="user"  &&
+ <div>
   <h3 className="text-lg font-semibold mb-2">Videos</h3>
   <p className="text-sm text-gray-500 mb-4">
     Upload Video (max 1 video, max size - 10MB to 30MB, mp4, mov, avi).
   </p>
   <UploadVideo onVideoUpdate={handleVideoUpload} />
 </div>
+
+}
 
 
 
@@ -665,7 +665,9 @@ const SecondComponent = () => {
               </div>
 
               {/* Commission */}
-              <div>
+              {role !=="user"
+             ? (
+           <div>
                 <label className="block text-sm font-medium">Commission</label>
                 <div className="flex gap-2">
                   <input
@@ -680,8 +682,51 @@ const SecondComponent = () => {
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>
-              </div>
+           </div>
+           ) : (
+           <div>
+                <label className="block text-sm font-medium">Role</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="pussy"
+                      value="agent"
+                      checked={secondFormData.pussy === "agent"}
+                      onChange={(e) =>
+                        setSecondFormData({
+                          ...secondFormData,
+                          pussy: e.target.value,
+                        })
+                      }
+                      className="mr-2"
+                    />
+                    Agent
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="pussy"
+                      value="owner"
+                      checked={secondFormData.pussy === "owner"}
+                      onChange={(e) =>
+                        setSecondFormData({
+                          ...secondFormData,
+                          pussy: e.target.value,
+                        })
+                      }
+                      className="mr-2"
+                    />
+                    Owner
+                  </label>
+                </div>
+           </div>
+           )}
 
+
+
+
+    
               <div className="mt-4">
                 <label className="block text-sm font-medium">Price</label>
                 <div className="flex gap-2">
