@@ -32,7 +32,8 @@ export const createResidency = asyncHandler(async (req, res) => {
   } = req.body.secondFormData;
 
   const userTeleNumber = req.body.teleNumber;
-
+  const email = req.body.email;
+  
   // Log the incoming request to verify structure
   console.log("Request body:", req.body);
  
@@ -67,6 +68,7 @@ export const createResidency = asyncHandler(async (req, res) => {
         type,
         parking,
         city,
+       email,
         addressURL,
         balcony,
         amenities,
