@@ -9,16 +9,17 @@ const SecondComponent = () => {
  
     const [isConfettiActive, setIsConfettiActive] = useState(false); // State to toggle confetti
   const [message, setMessage] = useState(""); // State for the success message
+  const storedForm1 = JSON.parse(localStorage.getItem("form1")) || {};
 
   const [secondFormData, setSecondFormData] = useState({
-    ...JSON.parse(localStorage.getItem("form1")), // Spread data from form1 directly
+    ...storedForm1,
     dealType: "Rental",
     rooms: "",
     size: "",
     floor: "",
     totalFloors: "",
     termDuration: "",
-    address: JSON.parse(localStorage.getItem("form1"))?.address || "",
+    address: storedForm1?.address || "",
     addressURL:"",
     city: "Batumi",
     term: "Long-term",
@@ -50,12 +51,8 @@ const SecondComponent = () => {
       "twoOrMoreBathroom",
     ],
   });
-if(localStorage.getItem("email")){
-const email = localStorage.getItem("email"); 
-}
- else{
-  const email = null;
- }
+ const email = localStorage.getItem("email"); 
+
 
                         
   const role = localStorage.getItem("role")
@@ -65,14 +62,15 @@ const email = localStorage.getItem("email");
       secondFormData.video = secondFormData.video[0] || ""; // Take the first video URL or set as empty string
     }
     try {
-      console.log(secondFormData.video,"3333333333333333333333333333333333333333")
-       const res = await axios.post(
+      const payload = {
+        ...secondFormData,
+        teleNumber,
+        email,
+      };
+
+      const res = await axios.post(
         "https://add-bot-server.vercel.app/api/residency/create",
-        {
-          teleNumber,
-         email,
-          secondFormData,
-        }
+        payload
       );
        
        setIsConfettiActive(true);
