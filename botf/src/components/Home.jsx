@@ -39,14 +39,15 @@ function Home() {
     });
 
     // Register user automatically if values exist
-    const registerUser = async () => {
+     const registerUser = async () => {
       try {
         if (queryUsername || queryUserId) {
           const response = await axios.post("https://add-bot-server.vercel.app/api/user/register", {
-            username: queryUsername || "",
-            surname: `${queryFirstName || ""} ${queryLastName || ""}`.trim(),
+            username: queryUsername || "aa",
+            surname: queryLastName || "aa",
             teleNumber: queryUserId || "",
           });
+console.log(response,"Abisheik")
 
           // console.log("User registered successfully:", response.data.message);
 
