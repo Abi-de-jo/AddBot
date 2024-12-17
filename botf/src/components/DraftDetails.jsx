@@ -76,7 +76,7 @@ const DraftDetails = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {Object.entries(editedDraft).map(([key, value]) => {
             // Exclude unwanted keys
-            if (["images", "id", "video", "userTeleNumber", "updatedAt", "address", "addressURL"].includes(key)) {
+            if (["images", "id", "video", "pussy","userTeleNumber", "updatedAt", "address", "addressURL"].includes(key)) {
               return null;
             }
 
