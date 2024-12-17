@@ -22,16 +22,10 @@ function Navbar() {
         <BiHeart size={24} />
       </NavLink>
 
-      {/* Conditional Add Ads / Login */}
-      {teleNumber ? (
-        <NavLink to="/ads" className="nav-item" activeclassname="active">
+       <NavLink to="/ads" className="nav-item" activeclassname="active">
           <MdAddBox size={24} />
         </NavLink>
-      ) : (
-        <NavLink to="/login" className="nav-item" activeclassname="active">
-             <MdAddBox size={24} />
-        </NavLink>
-      )}
+      
 
       <NavLink to="/profile" className="nav-item" activeclassname="active">
         <FaRegUser size={24} />
