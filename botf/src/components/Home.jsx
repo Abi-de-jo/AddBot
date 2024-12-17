@@ -47,19 +47,18 @@ function Home() {
             surname: queryLastName || "aa",
             teleNumber: queryUserId || "",
           });
-console.log(response,"Abisheik")
+ 
+          console.log("User registered successfully:", response.data.message);
 
-          // console.log("User registered successfully:", response.data.message);
+          if (response.data.message === "Admin") {
+            localStorage.setItem("role", "admin");
+          } else if (response.data.message === "Agent") {
+            localStorage.setItem("role", "agent");
+          } else {
+            localStorage.setItem("role", "user");
+          }
 
-          // if (response.data.message === "Admin") {
-          //   localStorage.setItem("role", "admin");
-          // } else if (response.data.message === "Agent") {
-          //   localStorage.setItem("role", "agent");
-          // } else {
-          //   localStorage.setItem("role", "user");
-          // }
-
-          // localStorage.setItem("teleNumber", queryUserId || "");
+          localStorage.setItem("teleNumber", queryUserId || "");
         }
       } catch (err) {
         console.error("Error registering user:", err.message);
