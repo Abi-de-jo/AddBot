@@ -68,7 +68,7 @@ console.log(params)
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-100">
-      <h1>{params}</h1>
+      <h1>{params}:Helloooo</h1>
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold text-center text-blue-600 mb-6">Login</h1>
         <form onSubmit={handleLogin} className="space-y-6">
