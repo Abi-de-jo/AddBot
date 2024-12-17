@@ -45,24 +45,24 @@ export const createUser = asyncHandler(async (req, res) => {
       const newUser = await prisma.user.create({
         data: {username: username, surname: surname, teleNumber:teleNumber},
       });
-      if (teleNumber.includes("david")) {
-        return res.status(201).json({
-          message: "Admin",
-          admin: newUser,
-        });
-      }
+      // if (teleNumber.includes("david")) {
+      //   return res.status(201).json({
+      //     message: "Admin",
+      //     admin: newUser,
+      //   });
+      // }
 
-      if (isAgent) {
-        return res.status(201).json({
-          message: "Agent",
-          agent: newUser,
-        });
-      }
+      // if (isAgent) {
+      //   return res.status(201).json({
+      //     message: "Agent",
+      //     agent: newUser,
+      //   });
+      // }
 
-      return res.status(201).json({
-        message: "User registered successfully",
-        user: newUser,
-      });
+      // return res.status(201).json({
+      //   message: "User registered successfully",
+      //   user: newUser,
+      // });
     }
   } catch (err) {
     console.error(err);
