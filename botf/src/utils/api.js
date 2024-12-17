@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-    baseURL: "https://add-bot-server.vercel.app/api", // Use HTTP for local development
+    baseURL: "https://add-bot-server.vercel.app", // Use HTTP for local development
   });
   
 
@@ -29,6 +29,20 @@ console.log(data)
 export const getAllProperties = async () => {
   try {
     const response = await api.get("/residency/allres", {
+      timeout: 10 * 10000,
+    });
+    if (response.status === 400 || response.status === 500) {
+      throw response.data;
+    }
+    return response.data;
+  } catch (error) {
+    console.log(error)
+     throw error;
+  }
+};
+export const getAll = async () => {
+  try {
+    const response = await api.get("/residency/allresies", {
       timeout: 10 * 10000,
     });
     if (response.status === 400 || response.status === 500) {
@@ -112,6 +126,9 @@ export const getAllDraft = async () => {
     throw error;
   }
 };
+
+
+
 export const getAllDraftAgent = async () => {
   console.log("Hiii")
   try {

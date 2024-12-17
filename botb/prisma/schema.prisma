@@ -13,12 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+ 
+
 model User {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
-  username   String?
-  teleNumber String?
-  email      String @unique
-  password   String
+  username   String
+  surname    String
+  teleNumber String @unique // Ensure teleNumber is unique for relations
 
   residencies Residency[] @relation("UserResidencies")
 
@@ -30,10 +31,10 @@ model User {
 }
 
 model Residency {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+ id         String @id @default(auto()) @map("_id") @db.ObjectId
   images        String[]
   title         String?
-  video         String
+  video         String?
   address       String?
   metro         String[] @default([])
   district      String[] @default([])
@@ -41,6 +42,7 @@ model Residency {
   residencyType String?
   city          String?
   price         Int?
+  pussy         String?
   discount      Float?
   commission    Float?
   rooms         Int?
@@ -48,6 +50,7 @@ model Residency {
   totalFloors   Int?
   area          Float?
   type          String?
+  addressURL    String?
   paymentMethod String?
   parking       Int?
   balcony       Boolean?
@@ -60,12 +63,11 @@ model Residency {
   description   String?
   status        String?
 
-  userEmail String?
-  user      User?  @relation(fields: [userEmail], references: [email], name: "UserResidencies")
+  userTeleNumber String? // Foreign key for relation
+  user           User?   @relation(fields: [userTeleNumber], references: [teleNumber], name: "UserResidencies")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@map("residencies")
 }
-

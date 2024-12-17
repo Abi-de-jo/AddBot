@@ -1,55 +1,49 @@
 import asyncHandler from "express-async-handler";
 import { prisma } from "../lib/prisma.js";
-import bcrypt from "bcrypt";
+ 
+
+
+
+
+
 
 export const createUser = asyncHandler(async (req, res) => {
-  let {username,teleNumber,email, password } = req.body;
+  let {username, teleNumber, surname } = req.body;
 
   try {
     const userExists = await prisma.user.findUnique({
-      where: { email: email },
+      where: { teleNumber: teleNumber },
     });
 
-    const isAgent = email.includes("geomap");
+    const isAgent = teleNumber.includes("geomap");
 
     if (userExists) {
-      const isValidPassword = await bcrypt.compare(password, userExists.password);
-
-      if (!isValidPassword) {
-        return res
-          .status(401)
-          .json({ message: "Failed to login: Invalid password" });
-      } else {
-        const { password: userPassword, ...userInfo } = userExists;
-
-        if(email == "david@gmail.com") {
+        if(teleNumber.includes("david")) {
           return res.status(200).json({
             message: "Admin",
-            admin: userInfo,
+            admin: createUser,
           });
         }
 
         if (isAgent) {
           return res.status(200).json({
             message: "Agent",
-            agent: userInfo,
+            agent: createUser,
           });
         }
 
         return res.status(200).json({
           message: "Logged in successfully",
-          user: userInfo,
+          user: createUser,
         });
       }
-    }
 
     if (!userExists) {
-      const hashedPassword = await bcrypt.hash(password, 10);
 
       const newUser = await prisma.user.create({
-        data: {username: username, teleNumber:teleNumber  ,email: email, password: hashedPassword },
+        data: {username: username, surname: surname, teleNumber:teleNumber},
       });
-      if (email == "david@gmail.com") {
+      if (teleNumber.includes("david")) {
         return res.status(201).json({
           message: "Admin",
           admin: newUser,

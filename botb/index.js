@@ -19,5 +19,8 @@ app.use(cors());
 app.use("/api/user", userRoute);
 app.use("/api/residency", residencyRoute);
 
+app.listen(3000,(req,res)=>{
 
- export default app;
+  console.log("hi")
+})
+//  export default app;

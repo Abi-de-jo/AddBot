@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { getAllDraftAgent } from "../utils/api";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa"; // Import icons
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-function AgentDraft() {
+function AgentDraftDetails() {
   const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,6 +13,7 @@ function AgentDraft() {
     const fetchDrafts = async () => {
       try {
         const data = await getAllDraftAgent();
+        console.log(data)
         setDrafts(data);
       } catch (err) {
         setError("Failed to fetch drafts. Please try again later.",err);
@@ -23,17 +25,19 @@ function AgentDraft() {
     fetchDrafts();
   }, []);
 
+  const navigate = useNavigate();
+
+console.log("bbbbbbbbbbbbbbbbb")
   const handleAccept = async (id) => {
     const selectedDraft = drafts.find((draft) => draft.id === id);
+    console.log(selectedDraft,"?mmmmmmmmmmmmmm")
+    console.log("bbbbbbbbbbbbbbbbb")
 
-    if (!selectedDraft) {
-      console.error("Draft not found.");
-      return;
-    }
+     
 
-    console.log("Accepted Draft Details:", selectedDraft);
-
+    
     try {
+      console.log("Accepted Draft Details:", selectedDraft);
       // Ensure `video` is a single string
       if (Array.isArray(selectedDraft.video)) {
         selectedDraft.video = selectedDraft.video[0] || ""; // Take the first video URL or default to an empty string
@@ -227,7 +231,7 @@ ${selectedDraft.parking === 0 ? "❌ Parking" : ""}
           : ""}  
       
 👤 Contact: [@David_Tibelashvili]
-📞 +995 599 20 67 16 | #${selectedDraft?.userEmail.split('@')[0]}
+📞 +995 599 20 67 16 | #${selectedDraft?.userTeleNumber}
         
 ⭐ [Check all listings](https://t.me/rent_tbilisi_ge/9859) | [Reviews](https://t.me/reviews_rent_tbilisi)
         
@@ -269,19 +273,25 @@ ${selectedDraft.parking === 0 ? "❌ Parking" : ""}
   if (error) {
     return <p className="text-center text-red-500 mt-10">{error}</p>;
   }
+  const handleImageClick = (draft) => {
+    navigate(`/draft-details/${draft.id}`, { state: { draft } });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-4 mb-6">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Drafts</h1>
       {drafts.length > 0 ? (
         <div className="space-y-4">
           {drafts.map((draft) => (
             <div
+
               key={draft.id}
               className="flex items-center bg-white border border-gray-300 rounded-xl shadow-md p-4"
             >
               <div className="w-20 h-20 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
                 <img
+                            onClick={() => handleImageClick(draft)} // Navigate with draft details
+
                   src={draft?.images?.[0] || "https://via.placeholder.com/100x100?text=No+Image"}
                   alt={draft.title || "Draft"}
                   className="w-full h-full object-cover"
@@ -324,4 +334,4 @@ ${selectedDraft.parking === 0 ? "❌ Parking" : ""}
   );
 }
 
-export default AgentDraft;
+export default AgentDraftDetails;

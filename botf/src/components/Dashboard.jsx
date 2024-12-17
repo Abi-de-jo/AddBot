@@ -12,26 +12,30 @@ import {
 import { getAllUsers, getAllProperties } from "../utils/api";
 
 function Dashboard() {
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState([]); // Combined chart data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userEmails, setUserEmails] = useState([]);
+  const [userEmails, setUserEmails] = useState([]); // User email list
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedUserData, setSelectedUserData] = useState([]);
+  const [selectedUserData, setSelectedUserData] = useState([]); // Specific user property data
 
+  // Fetch user and property data for the main chart
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch all users
         const users = await getAllUsers();
-        const emails = users.map((user) => user.email || "Unknown");
+        const emails = users.map((user) => user.teleNumber || "Unknown");
         setUserEmails(emails);
 
+        // Aggregate user roles
         const userRoles = users.reduce((acc, user) => {
           const role = user.role || "Unknown";
           acc[role] = (acc[role] || 0) + 1;
           return acc;
         }, {});
 
+        // Fetch all properties
         const properties = await getAllProperties();
         const propertyStatuses = properties.reduce((acc, property) => {
           const status = property.status || "Unknown";
@@ -39,6 +43,7 @@ function Dashboard() {
           return acc;
         }, {});
 
+        // Combine user roles and property statuses into chart data
         const combinedData = [];
         const allKeys = new Set([...Object.keys(userRoles), ...Object.keys(propertyStatuses)]);
         allKeys.forEach((key) => {
@@ -51,7 +56,8 @@ function Dashboard() {
 
         setChartData(combinedData);
       } catch (err) {
-        setError("Failed to fetch data");
+        console.error("Error fetching data:", err);
+        setError("Failed to fetch data. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -60,11 +66,16 @@ function Dashboard() {
     fetchData();
   }, []);
 
-  const handleUserClick = async (email) => {
-    setSelectedUser(email);
+  // Handle click on user to fetch user-specific property data
+  const handleUserClick = async (teleNumber) => {
+    setSelectedUser(teleNumber);
+    setError(null); // Clear previous errors
+
     try {
       const properties = await getAllProperties();
-      const userProperties = properties.filter((property) => property.userEmail === email);
+      const userProperties = properties.filter(
+        (property) => property.teleNumber === teleNumber
+      );
 
       const propertyStatuses = userProperties.reduce((acc, property) => {
         const status = property.status || "Unknown";
@@ -79,7 +90,8 @@ function Dashboard() {
 
       setSelectedUserData(userData);
     } catch (err) {
-      setError("Failed to fetch user-specific properties");
+      console.error("Error fetching user-specific data:", err);
+      setError("Failed to fetch user-specific properties.");
     }
   };
 
@@ -93,12 +105,14 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 p-6">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">Enhanced Dashboard</h1>
+      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
+        Dashboard
+      </h1>
 
-      {/* Combined Bar Chart */}
+      {/* Combined Chart Section */}
       <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4 text-center">
-          User and Property Trends
+          User Roles & Property Status Overview
         </h2>
         <ResponsiveContainer width="100%" height={400}>
           <BarChart
@@ -124,17 +138,19 @@ function Dashboard() {
 
       {/* User Email List */}
       <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold text-gray-700 mb-4">User Emails</h2>
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">User List</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {userEmails.map((email) => (
+          {userEmails.map((teleNumber) => (
             <button
-              key={email}
-              onClick={() => handleUserClick(email)}
+              key={teleNumber}
+              onClick={() => handleUserClick(teleNumber)}
               className={`p-4 text-center rounded-lg shadow-md ${
-                selectedUser === email ? "bg-blue-500 text-white" : "bg-gray-100"
-              } hover:bg-blue-200`}
+                selectedUser === teleNumber
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-100"
+              } hover:bg-blue-200 transition`}
             >
-              {email}
+              {teleNumber}
             </button>
           ))}
         </div>

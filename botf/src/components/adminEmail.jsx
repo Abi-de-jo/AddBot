@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 
 const AdminEmail = () => {
-  const email = localStorage.getItem("email") || null; // Retrieve email from localStorage
+  const email = localStorage.getItem("teleNumber") || null; // Retrieve email from localStorage
 
   const { data, isLoading, error } = useProperties();
   const navigate = useNavigate();

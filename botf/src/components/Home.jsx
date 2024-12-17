@@ -77,7 +77,6 @@ function Home() {
   }
 
   return (
-    
     <div className="min-h-screen bg-gray-100 p-4">
       {/* Header Section */}
       <div className="flex justify-between items-center bg-white p-6 rounded-lg shadow-lg mb-6">
@@ -95,12 +94,10 @@ function Home() {
         {isMapView ? (
           // Map View
           <div>
-
-<LoadScript googleMapsApiKey="AIzaSyCzQePlVTWMps35sLtoq4DT7PN5n5_xGbg">
-      {/* Your App Components */}
-      <Map />
-    </LoadScript>
-
+            <LoadScript googleMapsApiKey="AIzaSyCzQePlVTWMps35sLtoq4DT7PN5n5_xGbg">
+              {/* Your App Components */}
+              <Map />
+            </LoadScript>
           </div>
         ) : (
           // List View
@@ -138,6 +135,15 @@ function Home() {
                   <p className="text-sm text-gray-600 mt-1">
                     <span className="font-medium">Address:</span> {property.address || "N/A"}
                   </p>
+                  <button
+                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent triggering card click
+                      window.open(`https://t.me/David_Tibelashvili?propertyId=${property.id}&creator=${property.userEmail}`, "_blank"); // Open Telegram link with property ID and creator email
+                    }}
+                  >
+                   Write
+                  </button>
                 </div>
 
                 {/* Favorite Icon */}

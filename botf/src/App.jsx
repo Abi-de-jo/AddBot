@@ -15,17 +15,20 @@ import Dashboard from "./components/Dashboard";
 import AdminEmail from "./components/adminEmail";
 import AllAgents from "./components/AllAgents";
 import AgentDraft from "./components/AgentDraft";
+import AgentCard from "./components/AgentCard";
+import DraftDetails from "./components/DraftDetails";
+import AgentDraftDetails from "./components/AgentDraft";
 
 const App = () => {
   const [step, setStep] = useState(0); // Manages step state for the application
   const queryClient = new QueryClient();
-  const role = localStorage.getItem("role"); // Retrieve role from localStorage
+  const role = localStorage.getItem("role");  
+  const isAuthenticated = localStorage.getItem("teleNumber");
 
-  // Check if the user is authenticated by checking localStorage for email
-  const isAuthenticated = !!localStorage.getItem("email"); // `!!` converts to boolean
 
+  console.log(isAuthenticated)
   useEffect(() => {
-    if (!isAuthenticated && step === 2) {
+    if (!isAuthenticated && step !== 0) {
       setStep(0); // Reset step if the user is not authenticated
     }
   }, [isAuthenticated, step]);
@@ -35,15 +38,11 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <div className="app-container">
           <Routes>
-            {/* Default Route: Home Page */}
+            {/* Public Pages */}
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
-
-            {/* Public Access Pages */}
             <Route path="/search" element={<Search />} />
             <Route path="/ads" element={<SecondComponent setStep={setStep} />} />
-
-            {/* Login Route */}
             <Route path="/login" element={<LoginForm setStep={setStep} />} />
 
             {/* Restricted Pages */}
@@ -51,9 +50,9 @@ const App = () => {
               path="/profile"
               element={
                 isAuthenticated ? (
-                  role === "admin" ? <AdminEmail /> : <Profile />
+                  role == "admin" ? <AdminEmail /> : <Profile />
                 ) : (
-                  <Navigate to="/login" /> // Redirect to login if not authenticated
+                  <Navigate to="/login" />
                 )
               }
             />
@@ -69,22 +68,31 @@ const App = () => {
                 isAuthenticated ? <CardDetails /> : <Navigate to="/login" />
               }
             />
+             <Route path="/agentPub/:id" element={<AgentCard />} />
+             <Route path="/draft-details/:id" element={<DraftDetails />} />
+
             <Route
               path="/dashboard"
-              element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+              element={
+                isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
+              }
             />
             <Route
               path="/draft"
-              element={isAuthenticated ? <Draft /> : <Navigate to="/login" />}
+              element={
+                isAuthenticated ? <Draft /> : <Navigate to="/login" />
+              }
             />
 
-            {/* Admin Routes */}
+            {/* Admin-Specific Routes */}
             {role === "admin" && (
               <>
                 <Route path="/owner-draft" element={<Draft />} />
                 <Route path="/agent-draft" element={<AgentDraft />} />
                 <Route path="/analytics" element={<Dashboard />} />
                 <Route path="/agents-list" element={<AllAgents />} />
+                <Route path="/draft-details/:id" element={<AgentDraftDetails />} />
+
               </>
             )}
 
@@ -93,15 +101,21 @@ const App = () => {
               path="/main"
               element={
                 isAuthenticated ? (
-                  <>
-                    {step === 1 && <FirstComponent setStep={setStep} />}
-                    {step === 2 && <SecondComponent setStep={setStep} />}
-                  </>
+                  step === 1 ? (
+                    <FirstComponent setStep={setStep} />
+                  ) : step === 2 ? (
+                    <SecondComponent setStep={setStep} />
+                  ) : (
+                    <Navigate to="/home" /> // Default to home if step is not defined
+                  )
                 ) : (
-                  <Navigate to="/login" /> // Redirect to login if not authenticated
+                  <Navigate to="/login" />
                 )
               }
             />
+
+            {/* Catch-All Route */}
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
 
           {/* Navbar is always displayed */}

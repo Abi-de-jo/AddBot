@@ -4,42 +4,37 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const LoginForm = ({ setStep }) => {
-  const [email, setEmail] = useState('');
-  const [username, setusername] = useState('');
+   const [username, setusername] = useState('');
+  const [surname, setsurname] = useState('');
   const [teleNumber, setteleNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(''); // To display error messages
+   const [error, setError] = useState(''); // To display error messages
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     setError(''); // Reset error message
 
-     if (password.length < 6) {
-      setError('Password must be at least 6 characters long.');
-      return;
-    }
+    
 
     try {
       const response = await axios.post(`https://add-bot-server.vercel.app/api/user/register`, {
-        email,
-        username,
+        surname,
+                username,
         teleNumber,
-        password,
-      });
+       });
 
       console.log('User logged in successfully:', response.data.message);
 
       // Save role and email to localStorage based on response message
       if (response.data.message === 'Admin') {
         localStorage.setItem('role', 'admin');
-        localStorage.setItem('email', email);
+        localStorage.setItem('teleNumber', teleNumber);
       } else if (response.data.message === 'Agent') {
         localStorage.setItem('role', 'agent');
-        localStorage.setItem('email', email);
+        localStorage.setItem('teleNumber', teleNumber);
       } else {
         localStorage.setItem('role', 'user');
-        localStorage.setItem('email', email);
+        localStorage.setItem('teleNumber', teleNumber);
       }
 
       setStep(1);
@@ -68,8 +63,28 @@ const LoginForm = ({ setStep }) => {
                 error && !username ? 'border-red-500' : 'border-gray-300'
               } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
               placeholder="Enter your Name"
+              required
             />
             {error && !username && (
+              <p className="text-sm text-red-500 mt-1">Email is required.</p>
+            )}
+          </div>
+          <div>
+            <label htmlFor="surname" className="block text-sm font-medium text-gray-700 mb-1">
+              Surname
+            </label>
+            <input
+              id="surname"
+              type="text"
+              value={surname}
+              onChange={(e) => setsurname(e.target.value)}
+               className={`w-full px-4 py-2 border ${
+                error && !surname ? 'border-red-500' : 'border-gray-300'
+              } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+              placeholder="Enter your Surname "
+              required
+            />
+            {error && !surname && (
               <p className="text-sm text-red-500 mt-1">Email is required.</p>
             )}
           </div>
@@ -77,7 +92,7 @@ const LoginForm = ({ setStep }) => {
 
           <div>
             <label htmlFor="teleNumber" className="block text-sm font-medium text-gray-700 mb-1">
-              teleNumber
+              Telegram Number
             </label>
             <input
               id="teleNumber"
@@ -88,55 +103,17 @@ const LoginForm = ({ setStep }) => {
                 error && !teleNumber ? 'border-red-500' : 'border-gray-300'
               } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
               placeholder="Enter your teleNumber"
+              required
             />
             {error && !teleNumber && (
               <p className="text-sm text-red-500 mt-1">teleNumber is required.</p>
             )}
           </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className={`w-full px-4 py-2 border ${
-                error && !email ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-              placeholder="Enter your email"
-            />
-            {error && !email && (
-              <p className="text-sm text-red-500 mt-1">Email is required.</p>
-            )}
-          </div>
+          
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className={`w-full px-4 py-2 border ${
-                error && password.length < 6 ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none`}
-              placeholder="Enter your password"
-            />
-            {error && password.length < 6 && (
-              <p className="text-sm text-red-500 mt-1">{error}</p>
-            )}
-          </div>
+       
              
-          {error && email && password.length >= 6 && (
-            <p className="text-sm text-red-500 mt-1">{error}</p>
-          )}
-
+         
           <div>
             <button
               type="submit"

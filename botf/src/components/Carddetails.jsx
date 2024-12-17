@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-
-const API_BASE_URL = "https://add-bot-server.vercel.app/api"; // Replace with your backend base URL
+const API_BASE_URL = "https://add-bot-server.vercel.app"; // Replace with your backend base URL
 
 const CardDetails = () => {
   const location = useLocation();
@@ -45,18 +44,7 @@ const CardDetails = () => {
       }
     }
   };
-  const handleUpdate = async () => {
-    if (window.confirm('Are you sure you want to Update this property?')) {
-      try {
-        await axios.put(`https://add-bot-server.vercel.app/api/residency/updateDate/${editedCard.id}`);
-        alert('Property Updated successfully!');
-        navigate(-1);
-      } catch (error) {
-        console.error('Error updating property:', error);
-        alert('Failed to update property. Please try again.');
-      }
-    }
-  };
+ 
   
 
   const handleInputChange = (e) => {
@@ -153,14 +141,59 @@ const CardDetails = () => {
             className="w-full p-2 border rounded"
             placeholder="Price"
           />
+          <input
+            type="text"
+            name="discount"
+            value={editedCard.discount || ''}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            placeholder="Discount"
+          />
         </div>
       ) : (
         <>
           <h2 className="text-xl font-bold">{editedCard.title || 'Untitled Property'}</h2>
-          <p className="text-sm text-gray-600">{editedCard.address || 'Location not provided'}</p>
+
+          
+          <p className="text-sm text-gray-600">
+          📍 {editedCard.addressURL ? (
+    <a
+      href={editedCard.addressURL}
+      target="_blank" // Opens in a new tab
+      rel="noopener noreferrer" // Security best practice
+      className="text-blue-500 hover:underline"
+    >
+      {editedCard.address || "Click here for location"}
+    </a>
+  ) : (
+    editedCard.address || "Location not provided"
+  )}
+</p>
+
           <p className="text-sm text-blue-500">{editedCard?.type}</p>
           <p className="text-sm text-blue-500">{editedCard?.term} {editedCard?.termDuration}</p>
-          <p className="text-lg font-semibold">Price: <span className='text-yellow-500'>{editedCard.price || 'N/A'}</span></p>
+          <p className="text-lg font-semibold">
+  Price:{" "}
+  {editedCard.discount ? (
+    <>
+      <span className="text-gray-500 line-through mr-2">
+        {editedCard.price} $
+      </span>
+      <span className="text-yellow-500">
+        {(
+          editedCard.price -
+          (editedCard.price * editedCard.discount) / 100
+        ).toFixed(2)}{" "}
+        $
+      </span>
+      <span className="text-green-500 ml-2">
+        ({editedCard.discount}% off)
+      </span>
+    </>
+  ) : (
+    <span className="text-yellow-500">{editedCard.price || "N/A"} $</span>
+  )}
+</p>
         </>
       )}
 
@@ -232,12 +265,7 @@ const CardDetails = () => {
             >
               Delete
             </button>
-            <button
-              className="px-4 py-2 bg-yellow-500 text-white rounded-md shadow hover:bg-yellow-600"
-              onClick={handleUpdate}
-            >
-              Update
-            </button>
+           
           </div>
         ) : (
           <p className="text-gray-500">You cannot edit or delete this property.</p>

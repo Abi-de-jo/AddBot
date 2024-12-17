@@ -1,24 +1,47 @@
 import PropTypes from "prop-types";
-import useProperties from "../hooks/useProperties";
+
 import { useNavigate } from "react-router-dom";
-import { FaUserCircle } from "react-icons/fa"; // Import user icon
+import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
+import UseAll from "../hooks/useall";
 
 const Profile = () => {
-  const email = localStorage.getItem("email") || null; // Retrieve email from localStorage
-
-  const { data, isLoading, error } = useProperties();
+  const teleNumber = localStorage.getItem("teleNumber") || null; // Retrieve teleNumber from localStorage
   const navigate = useNavigate();
+const role = localStorage.getItem("role")
+  const { data, isLoading, error } = UseAll();
+  const [filterStatus, setFilterStatus] = useState("published"); // Default status filter
 
-  const handleLogout = () => {
-    localStorage.clear(); // Clear all localStorage data
-    navigate("/");  
-    window.location.reload()
+  console.log(data)
+  // Filter and log properties based on the selected status
+  const handleStatusClick = (status) => {
+    setFilterStatus(status);
+    const filteredData = data
+      ? data.filter(
+          (property) =>
+            property.userTeleNumber== teleNumber && property.status === status
+        )
+      : [];
+    console.log(`Filtered Properties with status "${status}":`, filteredData);
+
+    console.log(filteredData)
   };
 
-  if (!email) {
-    // If no email in localStorage, show login message
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
+    window.location.reload();
+  };
+
+  // Navigate to agentPub with property details
+  const handleCardClick = (property) => {
+    navigate(`../agentPub/${property.id}`, { state: { property } });
+  };
+
+  if (!teleNumber) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-100 p-4 ">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-100 p-4">
         <div className="bg-white rounded-lg shadow-lg p-6 text-center">
           <FaUserCircle className="text-blue-500 w-24 h-24 mx-auto" />
           <p className="mt-4 text-xl font-bold text-gray-700">Please log in</p>
@@ -33,24 +56,22 @@ const Profile = () => {
     );
   }
 
-  // Filter properties by the current user's email and sort by latest updated time
-  const filteredProperties =
-    data
-      ?.filter((property) => property.userEmail === email)
-      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)) || [];
-
-  const handleCardClick = (card) => {
-    navigate(`/card/${card.id}`, { state: { card } });
-  };
+  const filteredProperties = data
+    ? data.filter(
+        (property) =>
+          property.userTeleNumber === teleNumber &&
+          property.status === filterStatus
+      )
+    : [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-4 mb-5">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-100 p-4">
       {/* User Profile Section */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-6 text-center relative">
         <div className="relative flex justify-center items-center">
           <FaUserCircle className="text-blue-500 w-24 h-24" />
         </div>
-        <p className="mt-4 text-xl font-bold text-gray-700">{email}</p>
+        <p className="mt-4 text-xl font-bold text-gray-700">{teleNumber}</p>
         <p className="text-sm text-gray-500">Welcome back! Here is your dashboard.</p>
         <button
           onClick={handleLogout}
@@ -60,21 +81,63 @@ const Profile = () => {
         </button>
       </div>
 
-      {/* Published Properties Section */}
+      {/* Buttons to Filter Properties */}
+
+
+  
+    
+      {role === "agent" && (
+  <div className="flex justify-center space-x-4 mb-4">
+    <button
+      onClick={() => handleStatusClick("published")}
+      className={`px-4 py-2 rounded-md shadow ${
+        filterStatus === "published"
+          ? "bg-blue-500 text-white"
+          : "bg-gray-200 text-gray-700"
+      } hover:bg-blue-400 transition`}
+    >
+      Published
+    </button>
+    <button
+      onClick={() => handleStatusClick("rented")}
+      className={`px-4 py-2 rounded-md shadow ${
+        filterStatus === "rented"
+          ? "bg-green-500 text-white"
+          : "bg-gray-200 text-gray-700"
+      } hover:bg-green-400 transition`}
+    >
+      Rented
+    </button>
+    <button
+      onClick={() => handleStatusClick("archieve")}
+      className={`px-4 py-2 rounded-md shadow ${
+        filterStatus === "archived"
+          ? "bg-red-500 text-white"
+          : "bg-gray-200 text-gray-700"
+      } hover:bg-red-400 transition`}
+    >
+      Archived
+    </button>
+  </div>
+)}
+
+
+      {/* Properties Section */}
       <div className="bg-white rounded-lg shadow-lg p-6">
         <h2 className="text-xl font-bold text-gray-700 mb-4 border-b pb-2 border-gray-200">
-          Published Properties
+          {filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)} Properties
         </h2>
+
         {isLoading ? (
           <p className="text-gray-600 text-center">Loading properties...</p>
         ) : error ? (
-          <p className="text-red-500 text-center">Error fetching properties.</p>
+          <p className="text-red-500 text-center">Error fetching properties. Please try again.</p>
         ) : filteredProperties.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
             {filteredProperties.map((property) => (
               <div
-                onClick={() => handleCardClick(property)}
                 key={property.id}
+                onClick={() => handleCardClick(property)}
                 className="flex p-4 bg-gray-50 border border-gray-200 rounded-md shadow hover:shadow-lg transition transform hover:scale-105 cursor-pointer"
               >
                 {/* Left: Image */}
@@ -82,7 +145,7 @@ const Profile = () => {
                   <img
                     src={
                       property.images?.[0] ||
-                      "https://via.placeholder.com/100x100?text=No+Image"
+                      "https://via.placeholder.com/150?text=No+Image"
                     }
                     alt="Property"
                     className="w-24 h-24 object-cover rounded-md border border-gray-300"
@@ -101,14 +164,17 @@ const Profile = () => {
                     <span className="font-medium">Type:</span> {property.type || "N/A"}
                   </p>
                   <p className="text-sm text-gray-500 mt-1">
-                    <span className="font-medium">Published:</span> {new Date(property.updatedAt).toLocaleDateString("en-GB")} {/* Format: DD/MM/YY */}
+                    <span className="font-medium">Published:</span>{" "}
+                    {new Date(property.updatedAt).toLocaleDateString("en-GB")}
                   </p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-center">No properties published yet.</p>
+          <p className="text-gray-500 text-center">
+            No {filterStatus} properties found.
+          </p>
         )}
       </div>
     </div>
@@ -116,7 +182,7 @@ const Profile = () => {
 };
 
 Profile.propTypes = {
-  email: PropTypes.string,
+  teleNumber: PropTypes.string,
 };
 
 export default Profile;

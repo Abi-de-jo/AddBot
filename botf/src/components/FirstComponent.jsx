@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-const API_BASE_URL = "https://add-bot-server.vercel.app"; // Replace with your backend base URL
+const API_BASE_URL = "http://localhost:3000"; // Replace with your backend base URL
 const FirstComponent = ({ setStep }) => {
   const [localFormData, setLocalFormData] = useState({
     address: '',

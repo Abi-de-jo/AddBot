@@ -1,50 +1,43 @@
-import asyncHandler from "express-async-handler";
+ import asyncHandler from "express-async-handler";
 import { prisma } from "../lib/prisma.js";
 
 export const createResidency = asyncHandler(async (req, res) => {
-  const residency = await prisma.residency.create({
-    data: {
-      title,
-      address,
-      metro,
-      district,
-      price,
-      selectedAdditional,
-      discount,
-      commission,
-      propertyType,
-      residencyType,
-      rooms,
-      termDuration,
-      term,
-      bathrooms,
-      floor,
-      totalFloors,
-      area,
-      type,
-      parking,
-      paymentMethod,
-      city,
-      balcony,
-      amenities,
-      description,
-      paymentMethod,
-      heating,
-      video,
-      status: "draft",
-      images: imageArray,
-      userEmail, // Relates the residency to the user via userEmail
-    },
-  });
+  const {
+    title,
+    address,
+    metro,
+    district,
+    price,
+    discount,
+    commission,
+    propertyType,
+    selectedAdditional,
+    residencyType,
+    termDuration,
+    term,
+    rooms,
+    city,
+    addressURL,
+    area,
+    type,
+    parking,
+    bathrooms,
+    floor,
+    totalFloors,
+    balcony,
+    amenities,
+    description,
+    video,
+    images, // Ensure this is an array
+  } = req.body.secondFormData;
 
-  const userEmail = req.body.email;
+  const userTeleNumber = req.body.teleNumber;
 
   // Log the incoming request to verify structure
   console.log("Request body:", req.body);
-  console.log("User email:", userEmail);
-
+ 
   // Validate input
-  if (!userEmail) {
+  if (!userTeleNumber) {
     return res.status(400).json({ message: "User email is required." });
   }
 
@@ -64,7 +57,6 @@ export const createResidency = asyncHandler(async (req, res) => {
         commission,
         propertyType,
         residencyType,
-        heating,
         rooms,
         termDuration,
         term,
@@ -72,18 +64,17 @@ export const createResidency = asyncHandler(async (req, res) => {
         floor,
         totalFloors,
         area,
-        heating,
         type,
         parking,
         city,
+        addressURL,
         balcony,
         amenities,
         description,
-        paymentMethod,
         video,
         status: "draft",
         images: imageArray,
-        userEmail, // Relates the residency to the user via userEmail
+        userTeleNumber, // Relates the residency to the user via userEmail
       },
     });
 
@@ -102,12 +93,69 @@ export const createResidency = asyncHandler(async (req, res) => {
 
   console.log(req.body);
 });
-
 export const getAllResidency = asyncHandler(async (req, res) => {
   try {
     const residencies = await prisma.residency.findMany({
       where: { status: "published" },
 
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    res.json(residencies);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+});
+export const getAll = asyncHandler(async (req, res) => {
+  try {
+    const residencies = await prisma.residency.findMany({
+ 
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    res.json(residencies);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+});
+export const getAllRentedResidency = asyncHandler(async (req, res) => {
+  const {teleNumber} = req.body;
+  try {
+    const residencies = await prisma.residency.findMany({
+      where: { teleNumber:teleNumber,status: "rented" },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    res.json(residencies);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+});
+export const getAllAgentPublishedResidency = asyncHandler(async (req, res) => {
+  const {teleNumber} = req.body;
+  try {
+    const residencies = await prisma.residency.findMany({
+      where: { teleNumber:teleNumber,status: "publish" },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    res.json(residencies);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+});
+export const getAllArchievedResidency = asyncHandler(async (req, res) => {
+  const {teleNumber} = req.body;
+
+  try {
+    const residencies = await prisma.residency.findMany({
+      where: { teleNumber:teleNumber,status: "rented" },
       orderBy: {
         createdAt: "desc",
       },
@@ -125,17 +173,16 @@ export const getAllAgentDraftResidencies = asyncHandler(async (req, res) => {
         createdAt: "desc",
       },
     });
-  
 
-    const geomapDrafts = drafts.filter(draft => draft.userEmail?.includes("geomap@gmail.com"));
-console.log(geomapDrafts)
+    const geomapDrafts = drafts.filter(draft => draft.userTeleNumber?.includes("geomap"));
+
     res.json( geomapDrafts);
   } catch (err) {
     throw new Error(err.message);
   }
 });
 
-export const getAllOwnerDraftResidencies = asyncHandler(async (req, res) => {
+ export const getAllOwnerDraftResidencies = asyncHandler(async (req, res) => {
   try {
     const drafts = await prisma.residency.findMany({
       where: { status: "draft" },
@@ -143,10 +190,9 @@ export const getAllOwnerDraftResidencies = asyncHandler(async (req, res) => {
         createdAt: "desc",
       },
     });
-     
-    
-    const otherDrafts = drafts.filter(draft => !draft.userEmail?.includes("geomap@gmail.com"));
-console.log(otherDrafts,"llllllllllllllll")
+
+    const otherDrafts = drafts.filter(draft => !draft.userTeleNumber?.includes("geomap"));
+
     res.json(otherDrafts);
   } catch (err) {
     throw new Error(err.message);
@@ -165,6 +211,57 @@ export const publishResidency = asyncHandler(async (req, res) => {
       },
     });
     res.status(200).json({ message: "Residency published", residency });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+export const drafttores = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  console.log(req.body);
+
+  try {
+    const residency = await prisma.residency.update({
+      where: { id: id },
+      data: {
+        status: "draft",
+      },
+    });
+    res.status(200).json({ message: "Residency drafted", residency });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+export const archieveResidency = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  console.log(req.body);
+
+  try {
+    const residency = await prisma.residency.update({
+      where: { id: id },
+      data: {
+        status: "archieve",
+      },
+    });
+    res.status(200).json({ message: "Residency archieved", residency });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+export const rentedResidency = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  console.log(req.body);
+
+  try {
+    const residency = await prisma.residency.update({
+      where: { id: id },
+      data: {
+        status: "rented",
+      },
+    });
+    res.status(200).json({ message: "Residency rented", residency });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -189,21 +286,20 @@ export const updateResidency = asyncHandler(async (req, res) => {
   const data = req.body; // Property data from frontend
   console.log(req.body);
 
-
   try {
     const residency = await prisma.residency.update({
       where: { id: id },
       data: {
         title: data.title,
-        price: parseFloat(data.price),
-        discount: parseFloat(data.discount),
-        description: data.description,
-        address: data.address,
-        district: data.district,
-        type: data.type,
-        metro: data.metro,
-        images: data.images, // Make sure images are properly handled if using FormData
-      },
+
+
+
+
+
+
+        
+       
+         },
     });
     res
       .status(200)
