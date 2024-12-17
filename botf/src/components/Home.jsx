@@ -42,7 +42,7 @@ function Home() {
     const registerUser = async () => {
       try {
         if (queryUsername || queryUserId) {
-          const response = await axios.post("http://localhost:3000/api/user/register", {
+          const response = await axios.post("https://add-bot-server.vercel.app/api/user/register", {
             username: queryUsername || "",
             surname: `${queryFirstName || ""} ${queryLastName || ""}`.trim(),
             teleNumber: queryUserId || "",
