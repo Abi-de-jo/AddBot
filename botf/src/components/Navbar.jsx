@@ -23,11 +23,11 @@ function Navbar() {
       </NavLink>
 
       {/* Show Ads only if role is "agent" or "admin" */}
-      {teleNumber  && (
+      
         <NavLink to="/ads" className="nav-item" activeclassname="active">
           <MdAddBox size={24} />
         </NavLink>
-      )}
+      
 
       <NavLink to="/profile" className="nav-item" activeclassname="active">
         <FaRegUser size={24} />
