@@ -20,6 +20,12 @@ const LoginForm = ({ setStep }) => {
     const queryFirstName = params.get('firstName');
     const queryLastName = params.get('lastName');
 
+    console.log('Query Parameters:');
+    console.log('Username:', queryUsername);
+    console.log('UserId:', queryUserId);
+    console.log('FirstName:', queryFirstName);
+    console.log('LastName:', queryLastName);
+
     // Store values in localStorage
     if (queryUsername) localStorage.setItem('username', queryUsername);
     if (queryUserId) localStorage.setItem('userId', queryUserId);
@@ -42,9 +48,13 @@ const LoginForm = ({ setStep }) => {
     e.preventDefault(); // Prevent the default form submission behavior
     setError(''); // Reset error message
 
-    try {
-      console.log(surname, username, teleNumber, userId, 'Details for login');
+    console.log('Form Submission Data:');
+    console.log('Username:', username);
+    console.log('Surname:', surname);
+    console.log('Telegram Number:', teleNumber);
+    console.log('UserId:', userId);
 
+    try {
       const response = await axios.post(
         `https://add-bot-server.vercel.app/api/user/register`,
         {
