@@ -172,3 +172,24 @@ export const getuser = asyncHandler(async (req, res) => {
         res.status(500).json({message: "Failed to get Users"})
     }
 })
+
+
+export const updateUserEmail = async ( req,res) => {
+  const {userId,email} = req.body;
+  try {
+    const updatedUser = await prisma.user.update({
+      where: {
+        teleNumber: userId,
+      },
+      data: {
+        email: email,
+      },
+    });
+    console.log('User email updated:', updatedUser);
+        res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Error updating user email:', error);
+    throw error;
+   
+  }
+};
