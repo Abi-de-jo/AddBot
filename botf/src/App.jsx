@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import LoginForm from "./components/LoginForm";
@@ -20,18 +19,7 @@ import DraftDetails from "./components/DraftDetails";
 import AgentDraftDetails from "./components/AgentDraft";
 
 const App = () => {
-  const [step, setStep] = useState(0); // Manages step state for the application
   const queryClient = new QueryClient();
-  const role = localStorage.getItem("role");  
-  const isAuthenticated = localStorage.getItem("teleNumber");
-
-
-  console.log(isAuthenticated)
-  useEffect(() => {
-    if (!isAuthenticated && step !== 0) {
-      setStep(0); // Reset step if the user is not authenticated
-    }
-  }, [isAuthenticated, step]);
 
   return (
     <BrowserRouter>
@@ -42,75 +30,27 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/ads" element={<SecondComponent setStep={setStep} />} />
- 
-            {/* Restricted Pages */}
-            <Route
-              path="/profile"
-              element={
-                isAuthenticated ? (
-                  role == "admin" ? <AdminEmail /> : <Profile />
-                ) : (
-                 )
-              }
-            />
-            <Route
-              path="/favorites"
-              element={
-                isAuthenticated ? <Favourite /> : <Navigate to="/" />
-              }
-            />
-            <Route
-              path="/card/:cardId"
-              element={
-                isAuthenticated ? <CardDetails /> : <Navigate to="/" />
-              }
-            />
-             <Route path="/agentPub/:id" element={<AgentCard />} />
-             <Route path="/draft-details/:id" element={<DraftDetails />} />
+            <Route path="/ads" element={<SecondComponent />} />
 
-            <Route
-              path="/dashboard"
-              element={
-                isAuthenticated ? <Dashboard /> : <Navigate to="/" />
-              }
-            />
-            <Route
-              path="/draft"
-              element={
-                isAuthenticated ? <Draft /> : <Navigate to="/" />
-              }
-            />
+            {/* Unrestricted Pages */}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/favorites" element={<Favourite />} />
+            <Route path="/card/:cardId" element={<CardDetails />} />
+            <Route path="/agentPub/:id" element={<AgentCard />} />
+            <Route path="/draft-details/:id" element={<DraftDetails />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/draft" element={<Draft />} />
 
-            {/* Admin-Specific Routes */}
-            {role === "admin" && (
-              <>
-                <Route path="/owner-draft" element={<Draft />} />
-                <Route path="/agent-draft" element={<AgentDraft />} />
-                <Route path="/analytics" element={<Dashboard />} />
-                <Route path="/agents-list" element={<AllAgents />} />
-                <Route path="/draft-details/:id" element={<AgentDraftDetails />} />
+            {/* Admin-Specific Routes (Now Accessible to Everyone) */}
+            <Route path="/owner-draft" element={<Draft />} />
+            <Route path="/agent-draft" element={<AgentDraft />} />
+            <Route path="/analytics" element={<Dashboard />} />
+            <Route path="/agents-list" element={<AllAgents />} />
+            <Route path="/draft-details/:id" element={<AgentDraftDetails />} />
 
-              </>
-            )}
-
-            {/* Conditional Rendering for Steps */}
-            <Route
-              path="/main"
-              element={
-                isAuthenticated ? (
-                  step === 1 ? (
-                    <FirstComponent setStep={setStep} />
-                  ) : step === 2 ? (
-                    <SecondComponent setStep={setStep} />
-                  ) : (
-                    <Navigate to="/home" /> // Default to home if step is not defined
-                  )
-                ) : (
-                  <Navigate to="/login" />
-                )
-              }
-            />
+            {/* Steps Conditional Rendering */}
+            <Route path="/main" element={<FirstComponent />} />
+            <Route path="/main-2" element={<SecondComponent />} />
 
             {/* Catch-All Route */}
             <Route path="*" element={<Navigate to="/" />} />
