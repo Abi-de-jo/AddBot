@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import LoginForm from "./components/LoginForm";
-import FirstComponent from "./components/FirstComponent";
+ import FirstComponent from "./components/FirstComponent";
 import SecondComponent from "./components/SecondComponent";
 import Navbar from "./components/Navbar";
 import Profile from "./components/Profile";
@@ -20,6 +19,7 @@ import AgentDraftDetails from "./components/AgentDraft";
 
 const App = () => {
   const queryClient = new QueryClient();
+  const role = localStorage.getItem("role");
 
   return (
     <BrowserRouter>
@@ -32,8 +32,13 @@ const App = () => {
             <Route path="/search" element={<Search />} />
             <Route path="/ads" element={<SecondComponent />} />
 
+            {/* Conditional Profile Page */}
+            <Route
+              path="/profile"
+              element={role === "admin" ? <AdminEmail /> : <Profile />}
+            />
+
             {/* Unrestricted Pages */}
-            <Route path="/profile" element={<Profile />} />
             <Route path="/favorites" element={<Favourite />} />
             <Route path="/card/:cardId" element={<CardDetails />} />
             <Route path="/agentPub/:id" element={<AgentCard />} />
