@@ -14,7 +14,7 @@ function AllAgents() {
         const users = await getAllUsers();
 console.log(users)
         // Filter users who have "geomap" in their email
-        const geomapUsers = users.filter((user) => user.email?.includes("geomap"));
+        const geomapUsers = users.filter((user) => user.teleNumber?.includes("geomap"));
 
         setAgents(geomapUsers); // Set filtered users
       } catch (err) {
@@ -53,8 +53,7 @@ console.log(users)
             >
               {/* Extract name from email if not provided */}
               <h2 className="text-xl font-semibold text-gray-800">
-                {agent.name || agent.email.split("@")[0]}
-              </h2>
+               </h2>
               <p className="text-gray-600 mt-2">
                 <span className="font-medium">Email:</span> {agent.email}
               </p>
