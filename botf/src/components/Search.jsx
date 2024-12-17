@@ -18,7 +18,6 @@ function Search() {
     rooms: "",
     heating: [], // Heating filter as an array
   });
-
   const navigate = useNavigate(); // Hook for navigation
   const email = localStorage.getItem("email");
   const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
@@ -80,7 +79,6 @@ function Search() {
     const matchesHeating =
       !filters.heating.length ||
       filters.heating.every((heat) => property.heating?.includes(heat));
-
     return (
       matchesSearch &&
       matchesCity &&
@@ -91,6 +89,7 @@ function Search() {
       matchesHeating
     );
   });
+  
 
   // Handle card click to navigate to the details page
   const handleCardClick = (card) => {
@@ -386,9 +385,14 @@ function Search() {
                 Apply
               </button>
             </div>
-          </div>
-        </div>
-      )}
+    </div>
+  </div>
+)}
+
+
+
+
+
     </div>
   );
 }
