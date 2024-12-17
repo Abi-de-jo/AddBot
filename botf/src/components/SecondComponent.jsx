@@ -50,8 +50,14 @@ const SecondComponent = () => {
       "twoOrMoreBathroom",
     ],
   });
-
+if(localStorage.getItem("email")){
 const email = localStorage.getItem("email"); 
+}
+ else{
+  const email = null;
+ }
+
+                        
   const role = localStorage.getItem("role")
   const handlePublish = async () => {
     const teleNumber = localStorage.getItem("teleNumber");
