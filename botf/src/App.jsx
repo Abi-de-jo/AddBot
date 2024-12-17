@@ -43,8 +43,7 @@ const App = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/search" element={<Search />} />
             <Route path="/ads" element={<SecondComponent setStep={setStep} />} />
-            <Route path="/login" element={<LoginForm setStep={setStep} />} />
-
+ 
             {/* Restricted Pages */}
             <Route
               path="/profile"
@@ -52,20 +51,19 @@ const App = () => {
                 isAuthenticated ? (
                   role == "admin" ? <AdminEmail /> : <Profile />
                 ) : (
-                  <Navigate to="/login" />
-                )
+                 )
               }
             />
             <Route
               path="/favorites"
               element={
-                isAuthenticated ? <Favourite /> : <Navigate to="/login" />
+                isAuthenticated ? <Favourite /> : <Navigate to="/" />
               }
             />
             <Route
               path="/card/:cardId"
               element={
-                isAuthenticated ? <CardDetails /> : <Navigate to="/login" />
+                isAuthenticated ? <CardDetails /> : <Navigate to="/" />
               }
             />
              <Route path="/agentPub/:id" element={<AgentCard />} />
@@ -74,13 +72,13 @@ const App = () => {
             <Route
               path="/dashboard"
               element={
-                isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
+                isAuthenticated ? <Dashboard /> : <Navigate to="/" />
               }
             />
             <Route
               path="/draft"
               element={
-                isAuthenticated ? <Draft /> : <Navigate to="/login" />
+                isAuthenticated ? <Draft /> : <Navigate to="/" />
               }
             />
 
