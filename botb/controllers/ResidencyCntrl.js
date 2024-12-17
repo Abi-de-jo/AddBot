@@ -176,7 +176,7 @@ export const getAllAgentDraftResidencies = asyncHandler(async (req, res) => {
       },
     });
 
-    const geomapDrafts = drafts.filter(draft => draft.userTeleNumber?.includes("geomap"));
+    const geomapDrafts = drafts.filter(draft => draft.email?.includes("geomap"));
 
     res.json( geomapDrafts);
   } catch (err) {
