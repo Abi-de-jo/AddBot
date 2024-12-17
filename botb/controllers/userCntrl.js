@@ -13,16 +13,14 @@ export const createUser = asyncHandler(async (req, res) => {
       where: { teleNumber },
     });
 
+
+   
+
     if (userExists) {
       if (userExists.email) {
         const isAgent = userExists.email.includes("geomap");
 
-        if (userExists.email.includes("david")) {
-          return res.status(200).json({
-            message: "Admin",
-            admin: userExists,
-          });
-        }
+       
 
         if (isAgent) {
           return res.status(200).json({
@@ -31,12 +29,19 @@ export const createUser = asyncHandler(async (req, res) => {
           });
         }
       }
-
+ if (userExists.email.includes("david")) {
+          return res.status(200).json({
+            message: "Admin",
+            admin: userExists,
+          });
+        }
       return res.status(200).json({
         message: "Logged in successfully",
         user: userExists,
       });
     }
+
+   
 
     // If user doesn't exist, create a new user
     const newUser = await prisma.user.create({
