@@ -54,7 +54,7 @@ const SecondComponent = () => {
   const role = localStorage.getItem("role")
   const handlePublish = async () => {
     const teleNumber = localStorage.getItem("teleNumber");
-
+const email = localstorage.getitem("email");
     if (Array.isArray(secondFormData.video)) {
       secondFormData.video = secondFormData.video[0] || ""; // Take the first video URL or set as empty string
     }
@@ -64,6 +64,7 @@ const SecondComponent = () => {
         "https://add-bot-server.vercel.app/api/residency/create",
         {
           teleNumber,
+         email,
           secondFormData,
         }
       );
