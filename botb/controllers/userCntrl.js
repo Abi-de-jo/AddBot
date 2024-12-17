@@ -9,28 +9,30 @@ export const createUser = asyncHandler(async (req, res) => {
 
   try {
     const userExists = await prisma.user.findUnique({
-      where: { teleNumber: teleNumber },
+      where: { teleNumber },
     });
-
+ return res.status(201).json({
+        message: "User registered successfully",
+       });
   
-      if (userExists) {
-        // if(userExists.email){
-        // //   const isAgent = userExists.email.includes("geomap");
-        // // }
-        //   if(userExists.email.includes("david")) {
-        //     return res.status(200).json({
-        //       message: "Admin",
-        //       admin: userExists,
-        //     });
-        //   }
+      // if (userExists) {
+      //   // if(userExists.email){
+      //   // //   const isAgent = userExists.email.includes("geomap");
+      //   // // }
+      //   //   if(userExists.email.includes("david")) {
+      //   //     return res.status(200).json({
+      //   //       message: "Admin",
+      //   //       admin: userExists,
+      //   //     });
+      //   //   }
   
-        //   if (isAgent) {
-        //     return res.status(200).json({
-        //       message: "Agent",
-        //       agent: userExists,
-        //     });
-       return res.status(200);
-          }
+      //   //   if (isAgent) {
+      //   //     return res.status(200).json({
+      //   //       message: "Agent",
+      //   //       agent: userExists,
+      //   //     });
+      //  return res.status(200);
+      //     }
 
     
     
@@ -39,6 +41,8 @@ export const createUser = asyncHandler(async (req, res) => {
         //   message: "Logged in successfully",
         //   user: userExists,
         // });
+
+   
       }
 
     if (!userExists) {
