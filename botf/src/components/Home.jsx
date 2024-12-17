@@ -12,92 +12,105 @@ function Home() {
   const { data, isLoading, error } = useProperties(); // Fetch properties using the hook
   const [isMapView, setIsMapView] = useState(false); // Toggle between List and Map view
   const [favorites, setFavorites] = useState([]); // Track favorite properties
-  const navigate = useNavigate(); // Navigation hook
-useEffect(() => {
-    // Parse query parameters
+  const navigate = useNavigate();
+  const [userDetails, setUserDetails] = useState({});
+
+  // Fetch URL parameters and store in localStorage
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    const queryUsername = params.get('username');
-    const queryUserId = params.get('userId');
-    const queryFirstName = params.get('firstName');
-    const queryLastName = params.get('lastName');
+    const queryUsername = params.get("username");
+    const queryUserId = params.get("userId");
+    const queryFirstName = params.get("firstName");
+    const queryLastName = params.get("lastName");
 
     // Store values in localStorage
-    if (queryUsername) localStorage.setItem('username', queryUsername);
-    if (queryUserId) localStorage.setItem('userId', queryUserId);
-    if (queryFirstName) localStorage.setItem('firstName', queryFirstName);
-    if (queryLastName) localStorage.setItem('lastName', queryLastName);
+    if (queryUsername) localStorage.setItem("username", queryUsername);
+    if (queryUserId) localStorage.setItem("userId", queryUserId);
+    if (queryFirstName) localStorage.setItem("firstName", queryFirstName);
+    if (queryLastName) localStorage.setItem("lastName", queryLastName);
 
-    // Console log the values
-    console.log('Stored in localStorage:');
-    console.log('Username:', queryUsername);
-    console.log('UserId:', queryUserId);
-    console.log('First Name:', queryFirstName);
-    console.log('Last Name:', queryLastName);
+    // Set state for user details
+    setUserDetails({
+      username: queryUsername || localStorage.getItem("username") || "",
+      userId: queryUserId || localStorage.getItem("userId") || "",
+      firstName: queryFirstName || localStorage.getItem("firstName") || "",
+      lastName: queryLastName || localStorage.getItem("lastName") || "",
+    });
+
+    // Register user automatically if values exist
+    const registerUser = async () => {
+      try {
+        if (queryUsername || queryUserId) {
+          const response = await axios.post("http://localhost:3000/api/user/register", {
+            username: queryUsername || "",
+            surname: `${queryFirstName || ""} ${queryLastName || ""}`.trim(),
+            teleNumber: queryUserId || "",
+          });
+
+          console.log("User registered successfully:", response.data.message);
+
+          if (response.data.message === "Admin") {
+            localStorage.setItem("role", "admin");
+          } else if (response.data.message === "Agent") {
+            localStorage.setItem("role", "agent");
+          } else {
+            localStorage.setItem("role", "user");
+          }
+
+          localStorage.setItem("teleNumber", queryUserId || "");
+        }
+      } catch (err) {
+        console.error("Error registering user:", err.message);
+      }
+    };
+
+    registerUser();
   }, []);
 
- 
-  const email = localStorage.getItem("email"); // Get user email from localStorage
+  // Fetch liked properties
+  const email = localStorage.getItem("teleNumber"); // Use userId or teleNumber as identifier
   useEffect(() => {
     const fetchLikes = async () => {
       if (email) {
         try {
-          const likedProperties = await getAllLikes(); // Fetch liked properties
-          setFavorites(likedProperties); // Update favorites state
+          const likedProperties = await getAllLikes();
+          setFavorites(likedProperties);
           console.log("Fetched liked properties:", likedProperties);
         } catch (error) {
-          console.error("Error fetching liked properties", error);
+          console.error("Error fetching liked properties:", error);
         }
       }
     };
     fetchLikes();
   }, [email]);
 
-  const handleCardClick = (card) => {
-    navigate(`/card/${card.id}`, { state: { card } });
-  };
-
+  // Handle favorite toggle
   const toggleFavorite = async (propertyId) => {
     if (!email) {
       alert("Please log in to access likes.");
-      navigate("/login"); // Redirect to login page
+      navigate("/login");
       return;
     }
 
     const isLiked = favorites.includes(propertyId);
-
     try {
       if (isLiked) {
-        await axios.delete(
-          `https://add-bot-server.vercel.app/api/user/dislikes/${propertyId}`,
-          { data: { email } }
-        );
-        setFavorites((prev) => prev.filter((id) => id !== propertyId)); // Remove from favorites
-        console.log(`Property Disliked: ${propertyId}`);
-      } else {
-        await axios.post(`https://add-bot-server.vercel.app/api/user/likes/${propertyId}`, {
-          email,
+        await axios.delete(`https://add-bot-server.vercel.app/api/user/dislikes/${propertyId}`, {
+          data: { email },
         });
-        setFavorites((prev) => [...prev, propertyId]); // Add to favorites
-        console.log(`Property Liked: ${propertyId}`);
+        setFavorites((prev) => prev.filter((id) => id !== propertyId));
+      } else {
+        await axios.post(`https://add-bot-server.vercel.app/api/user/likes/${propertyId}`, { email });
+        setFavorites((prev) => [...prev, propertyId]);
       }
     } catch (error) {
-      console.error("Error toggling favorite status", error);
+      console.error("Error toggling favorite status:", error);
     }
   };
 
-  const handleTouchEnd = (e, propertyId) => {
-    e.preventDefault(); // Prevent triggering multiple events
-    toggleFavorite(propertyId);
-  };
-
-  if (isLoading) {
-    return <p className="text-gray-600 text-center">Loading properties...</p>;
-  }
-
-  if (error) {
-    return <p className="text-red-500 text-center">Error fetching properties.</p>;
-  }
+  if (isLoading) return <p className="text-gray-600 text-center">Loading properties...</p>;
+  if (error) return <p className="text-red-500 text-center">Error fetching properties.</p>;
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -106,7 +119,7 @@ useEffect(() => {
         <h1 className="text-2xl font-bold text-gray-800">Properties</h1>
         <button
           onClick={() => setIsMapView(!isMapView)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
         >
           {isMapView ? "View List" : "View Map"}
         </button>
@@ -115,81 +128,39 @@ useEffect(() => {
       {/* Content Section */}
       <div className="bg-white p-6 rounded-lg shadow-lg">
         {isMapView ? (
-          // Map View
-          <div>
-            <LoadScript googleMapsApiKey="AIzaSyCzQePlVTWMps35sLtoq4DT7PN5n5_xGbg">
-              {/* Your App Components */}
-              <Map />
-            </LoadScript>
-          </div>
+          <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
+            <Map />
+          </LoadScript>
         ) : (
-          // List View
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
             {data.map((property) => (
               <div
                 key={property.id}
-                className="flex flex-col bg-gray-50 border border-gray-200 rounded-md shadow cursor-pointer relative"
-                onClick={() => handleCardClick(property)}
+                className="flex flex-col bg-gray-50 border rounded-md shadow cursor-pointer relative"
+                onClick={() => navigate(`/card/${property.id}`)}
               >
-                {/* Image */}
                 <img
-                  src={
-                    property.images?.[0] ||
-                    "https://via.placeholder.com/300x200?text=No+Image"
-                  }
+                  src={property.images?.[0] || "https://via.placeholder.com/300x200?text=No+Image"}
                   alt="Property"
                   className="w-full h-48 object-cover rounded-t-md"
                 />
-
-                {/* Details */}
                 <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {property.title || "Untitled Property"}
-                  </h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">Price:</span> {property.price || "N/A"}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">Type:</span> {property.type || "N/A"}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">City:</span> {property.city || "N/A"}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    <span className="font-medium">Address:</span> {property.address || "N/A"}
-                  </p>
-                  <button
-                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering card click
-                      window.open(`https://t.me/David_Tibelashvili?propertyId=${property.id}&creator=${property.userEmail}`, "_blank"); // Open Telegram link with property ID and creator email
-                    }}
-                  >
-                   Write
-                  </button>
+                  <h3 className="text-lg font-semibold">{property.title || "Untitled Property"}</h3>
+                  <p>Price: {property.price || "N/A"}</p>
                 </div>
-
-                {/* Favorite Icon */}
-                {email !== property.userEmail ? ( // Check if the property doesn't belong to the current user
-                  <div
-                    className="absolute bottom-4 right-4 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering card click
-                      toggleFavorite(property.id);
-                    }}
-                    onTouchEnd={(e) => handleTouchEnd(e, property.id)}
-                  >
-                    {favorites.includes(property.id) ? (
-                      <AiFillHeart color="red" size={30} className="animate-pulse" />
-                    ) : (
-                      <BiHeart color="gray" size={30} />
-                    )}
-                  </div>
-                ) : (
-                  <div className="absolute bottom-4 right-4 text-gray-500">
-                    Owned
-                  </div>
-                )}
+                <div
+                  className="absolute bottom-4 right-4 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite(property.id);
+                  }}
+                >
+                  {favorites.includes(property.id) ? (
+                    <AiFillHeart color="red" size={30} />
+                  ) : (
+                    <BiHeart color="gray" size={30} />
+                  )}
+                </div>
               </div>
             ))}
           </div>
