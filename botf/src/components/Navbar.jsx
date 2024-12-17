@@ -6,7 +6,7 @@ import { FaRegUser } from "react-icons/fa";
 import "./Navbar.css"; // Ensure this file contains appropriate styles
 
 function Navbar() {
-   const teleNumber = localStorage.getItem("teleNumber"); // Retrieve email from localStorage
+  const teleNumber = localStorage.getItem("teleNumber"); // Retrieve teleNumber from localStorage
 
   return (
     <nav className="navbar">
@@ -22,12 +22,16 @@ function Navbar() {
         <BiHeart size={24} />
       </NavLink>
 
-      {/* Show Ads only if role is "agent" or "admin" */}
-      
+      {/* Conditional Add Ads / Login */}
+      {teleNumber ? (
         <NavLink to="/ads" className="nav-item" activeclassname="active">
           <MdAddBox size={24} />
         </NavLink>
-      
+      ) : (
+        <NavLink to="/login" className="nav-item" activeclassname="active">
+             <MdAddBox size={24} />
+        </NavLink>
+      )}
 
       <NavLink to="/profile" className="nav-item" activeclassname="active">
         <FaRegUser size={24} />
@@ -37,4 +41,3 @@ function Navbar() {
 }
 
 export default Navbar;
-   
