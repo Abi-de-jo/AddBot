@@ -4,9 +4,6 @@ import { prisma } from "../lib/prisma.js";
 
 
 
-
-
-
 export const createUser = asyncHandler(async (req, res) => {
   let {username, teleNumber, surname } = req.body;
 
@@ -15,22 +12,26 @@ export const createUser = asyncHandler(async (req, res) => {
       where: { teleNumber: teleNumber },
     });
 
-    const isAgent = teleNumber.includes("geomap");
+    if(userExists.email){
+      const isAgent = userExists.email.includes("geomap");
 
-    if (userExists) {
-        if(teleNumber.includes("david")) {
-          return res.status(200).json({
-            message: "Admin",
-            admin: createUser,
-          });
-        }
+      if (userExists) {
+          if(userExists.email.includes("david")) {
+            return res.status(200).json({
+              message: "Admin",
+              admin: createUser,
+            });
+          }
+  
+          if (isAgent) {
+            return res.status(200).json({
+              message: "Agent",
+              agent: createUser,
+            });
+          }
 
-        if (isAgent) {
-          return res.status(200).json({
-            message: "Agent",
-            agent: createUser,
-          });
-        }
+    }
+    
 
         return res.status(200).json({
           message: "Logged in successfully",
@@ -68,6 +69,8 @@ export const createUser = asyncHandler(async (req, res) => {
   }
 });
 
+
+ 
 export const likes = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const { id } = req.params;
