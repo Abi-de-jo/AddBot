@@ -8,12 +8,13 @@ function AgentDraftDetails() {
   const [drafts, setDrafts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loadingActionId, setLoadingActionId] = useState(null); // Track processing ID
 
   useEffect(() => {
     const fetchDrafts = async () => {
       try {
         const data = await getAllDraftAgent();
-        console.log(data)
+        console.log(data,"Abisheikkkkkkkkkkkkkkkkkkkkkkkkk")
         setDrafts(data);
       } catch (err) {
         setError("Failed to fetch drafts. Please try again later.",err);
@@ -29,6 +30,8 @@ function AgentDraftDetails() {
 
 console.log("bbbbbbbbbbbbbbbbb")
   const handleAccept = async (id) => {
+    setLoadingActionId(id); // Set loading for this draft
+
     const selectedDraft = drafts.find((draft) => draft.id === id);
     console.log(selectedDraft,"?mmmmmmmmmmmmmm")
     console.log("bbbbbbbbbbbbbbbbb")
@@ -263,6 +266,8 @@ ${selectedDraft.parking === 0 ? "❌ Parking" : ""}
   }
 
   const handleReject = (id) => {
+    setLoadingActionId(id); // Set loading for this draft
+
     console.log(`Draft with ID ${id} rejected.`);
   };
 
@@ -315,15 +320,31 @@ ${selectedDraft.parking === 0 ? "❌ Parking" : ""}
               </div>
 
               <div className="flex flex-col items-center space-y-2">
-                <FaCheckCircle
-                  className="text-green-500 text-2xl cursor-pointer hover:text-green-600 transition-transform transform hover:scale-110"
-                  onClick={() => handleAccept(draft.id)}
-                />
-                <FaTimesCircle
-                  className="text-red-500 text-2xl cursor-pointer hover:text-red-600 transition-transform transform hover:scale-110"
-                  onClick={() => handleReject(draft.id)}
-                />
+                {/* Accept Icon */}
+                {loadingActionId === draft.id ? (
+                  <div className="text-blue-500 text-2xl animate-spin">⏳</div>
+                ) : (
+                  <FaCheckCircle
+                    className={`text-green-500 text-2xl cursor-pointer hover:text-green-600 transition-transform transform hover:scale-110 ${
+                      loadingActionId ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    onClick={() => !loadingActionId && handleAccept(draft.id)}
+                  />
+                )}
+
+                {/* Reject Icon */}
+                {loadingActionId === draft.id ? (
+                  <div className="text-blue-500 text-2xl animate-spin">⏳</div>
+                ) : (
+                  <FaTimesCircle
+                    className={`text-red-500 text-2xl cursor-pointer hover:text-red-600 transition-transform transform hover:scale-110 ${
+                      loadingActionId ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    onClick={() => !loadingActionId && handleReject(draft.id)}
+                  />
+                )}
               </div>
+
             </div>
           ))}
         </div>
