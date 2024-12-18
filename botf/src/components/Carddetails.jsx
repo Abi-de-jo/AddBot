@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-const API_BASE_URL = "https://add-bot-server.vercel.app"; // Replace with your backend base URL
+const API_BASE_URL = "https://add-bot-server.vercel.app/api"; // Replace with your backend base URL
 
 const CardDetails = () => {
   const location = useLocation();
@@ -23,7 +23,9 @@ const CardDetails = () => {
 
   const handleSave = async () => {
     try {
+      console.log(editedCard)
       await axios.put(`${API_BASE_URL}/residency/update/${editedCard.id}`, editedCard);
+
       setIsEditing(false);
       alert('Property updated successfully!');
     } catch (error) {
@@ -242,7 +244,7 @@ const CardDetails = () => {
         
         
         
-        {role ==="admin" || email==editedCard.userEmail ? (
+        {role ==="admin" || email==editedCard.email ? (
           <div className="flex items-center space-x-4">
             {isEditing ? (
               <button
