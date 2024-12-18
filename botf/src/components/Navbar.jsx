@@ -6,29 +6,26 @@ import { FaRegUser } from "react-icons/fa";
 import "./Navbar.css"; // Ensure this file contains appropriate styles
 
 function Navbar() {
-  const teleNumber = localStorage.getItem("teleNumber"); // Retrieve teleNumber from localStorage
-
   return (
-    <nav className="navbar">
+    <nav className="navbar fixed bottom-0 w-full bg-white shadow-md flex justify-around items-center py-3 md:py-5">
       <NavLink to="/home" className="nav-item" activeclassname="active">
-        <AiOutlineHome size={24} />
+        <AiOutlineHome size={32} className="text-gray-600 hover:text-blue-500 transition" />
       </NavLink>
 
       <NavLink to="/search" className="nav-item" activeclassname="active">
-        <AiOutlineSearch size={24} />
+        <AiOutlineSearch size={32} className="text-gray-600 hover:text-blue-500 transition" />
       </NavLink>
 
       <NavLink to="/favorites" className="nav-item" activeclassname="active">
-        <BiHeart size={24} />
+        <BiHeart size={32} className="text-gray-600 hover:text-blue-500 transition" />
       </NavLink>
 
-       <NavLink to="/ads" className="nav-item" activeclassname="active">
-          <MdAddBox size={24} />
-        </NavLink>
-      
+      <NavLink to="/ads" className="nav-item" activeclassname="active">
+        <MdAddBox size={32} className="text-gray-600 hover:text-blue-500 transition" />
+      </NavLink>
 
       <NavLink to="/profile" className="nav-item" activeclassname="active">
-        <FaRegUser size={24} />
+        <FaRegUser size={32} className="text-gray-600 hover:text-blue-500 transition" />
       </NavLink>
     </nav>
   );
