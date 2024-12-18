@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_BASE_URL = "https://add-bot-server.vercel.app"; // Replace with backend API URL
+const API_BASE_URL = "https://add-bot-server.vercel.app/api"; // Replace with backend API URL
 
 const AgentCard = () => {
   const location = useLocation();
@@ -13,6 +13,8 @@ const AgentCard = () => {
 
   const email = localStorage.getItem("teleNumber");
   const role = localStorage.getItem("role");
+  // const  role = "agent";
+  // const email = "999"
 
   const handleBack = () => {
     navigate(-1);
