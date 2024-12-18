@@ -5,9 +5,14 @@ import axios from "axios";
 const DraftDetails = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { draft } = location.state || {}; // Destructure draft data from state
+  const { draft } = location.state || {};
   const [isEditing, setIsEditing] = useState(false);
   const [editedDraft, setEditedDraft] = useState({ ...draft });
+  const [visibleSections, setVisibleSections] = useState({
+    amenities: false,
+    selectedAdditional: false,
+    heating: false,
+  });
 
   if (!draft) {
     return <p className="text-center mt-10">Draft details not available.</p>;
@@ -19,10 +24,21 @@ const DraftDetails = () => {
     setEditedDraft({ ...editedDraft, [name]: value });
   };
 
+  // Toggle Section Visibility
+  const toggleSection = (section) => {
+    setVisibleSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
+
   // Save Updated Draft
   const handleSave = async () => {
     try {
-      await axios.put(`https://add-bot-server.vercel.app/api/residency/update/${editedDraft.id}`, editedDraft);
+      await axios.put(
+        `https://add-bot-server.vercel.app/api/residency/update/${editedDraft.id}`,
+        editedDraft
+      );
       alert("Draft updated successfully!");
       setIsEditing(false);
     } catch (error) {
@@ -34,7 +50,9 @@ const DraftDetails = () => {
   // Reject Draft
   const handleReject = async () => {
     try {
-      await axios.delete(`https://add-bot-server.vercel.app/api/residency/delete/${draft.id}`);
+      await axios.delete(
+        `https://add-bot-server.vercel.app/api/residency/delete/${draft.id}`
+      );
       alert("Draft rejected successfully!");
       navigate(-1);
     } catch (error) {
@@ -46,7 +64,6 @@ const DraftDetails = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 mb-7">
       <div className="bg-white rounded-lg shadow-lg p-6 space-y-4">
-        {/* Back Button */}
         <button
           className="bg-gray-300 px-4 py-1 rounded-lg"
           onClick={() => navigate(-1)}
@@ -75,13 +92,39 @@ const DraftDetails = () => {
         {/* Editable Details */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {Object.entries(editedDraft).map(([key, value]) => {
-            // Exclude unwanted keys
-            if (["images", "id", "video", "pussy","userTeleNumber", "updatedAt", "address", "addressURL"].includes(key)) {
+            if (
+              ["images", "id", "video", "pussy", "updatedAt", "address"].includes(
+                key
+              )
+            ) {
               return null;
             }
 
-            // Allow editing only for 'title', 'price', and 'discount'
             const isEditable = ["title", "price", "discount"].includes(key);
+
+            // Handle Arrays with Toggle Buttons
+            if (["amenities", "selectedAdditional", "heating"].includes(key)) {
+              return (
+                <div key={key}>
+                  <label className="block text-gray-600 font-semibold capitalize">
+                    {key.replace(/([A-Z])/g, " $1")}
+                  </label>
+                  <button
+                    className="mt-1 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                    onClick={() => toggleSection(key)}
+                  >
+                    {visibleSections[key] ? "Hide Details" : "Show Details"}
+                  </button>
+                  {visibleSections[key] && (
+                    <ul className="mt-2 text-sm text-gray-700 list-disc pl-5">
+                      {Array.isArray(value)
+                        ? value.map((item, i) => <li key={i}>{item}</li>)
+                        : "No details available"}
+                    </ul>
+                  )}
+                </div>
+              );
+            }
 
             return (
               <div key={key}>
@@ -90,14 +133,16 @@ const DraftDetails = () => {
                 </label>
                 {isEditing && isEditable ? (
                   <input
-                    type={key === "price" || key === "discount" ? "number" : "text"} // Use number input for price/discount
+                    type={
+                      key === "price" || key === "discount" ? "number" : "text"
+                    }
                     name={key}
                     value={value || ""}
                     onChange={handleInputChange}
                     className="w-full p-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                   />
                 ) : (
-                  <p className="text-gray-700">{value || "N/A"}</p>
+                  <p className="text-gray-700 break-all">{value || "N/A"}</p>
                 )}
               </div>
             );
@@ -126,9 +171,7 @@ const DraftDetails = () => {
               <button
                 onClick={() => setIsEditing(true)}
                 className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
-              
-
-             >
+              >
                 Edit
               </button>
               <button
