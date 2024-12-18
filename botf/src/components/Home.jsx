@@ -13,7 +13,7 @@ function Home() {
   const [isMapView, setIsMapView] = useState(false); // Toggle between List and Map view
   const [favorites, setFavorites] = useState([]); // Track favorite properties
   const navigate = useNavigate();
-  const [userDetails, setUserDetails] = useState({});
+  const [ setUserDetails] = useState({});
 
   // Fetch URL parameters and store in localStorage
   useEffect(() => {
@@ -49,14 +49,14 @@ function Home() {
           });
 
           console.log("User registered successfully:", response.data.message);
-  console.log("User registered successfully:", response.data.email);
+          console.log("User registered successfully:", response.data.email);
 
           if (response.data.message === "Admin") {
-            localStorage.setItem("email",response.data.email)
+            localStorage.setItem("email",data.email)
             localStorage.setItem("role", "admin");
           } else if (response.data.message === "Agent") {
             localStorage.setItem("role", "agent");
-            localStorage.setItem("email",response.data.email)
+            localStorage.setItem("email",data.email)
           } else {
             localStorage.setItem("role", "user");
           }
@@ -72,12 +72,15 @@ function Home() {
   }, []);
 
   // Fetch liked properties
-  const email = localStorage.getItem("teleNumber"); // Use userId or teleNumber as identifier
+  const email = localStorage.getItem("teleNumber");  
+
+  // const email = "123456";
   useEffect(() => {
     const fetchLikes = async () => {
       if (email) {
         try {
           const likedProperties = await getAllLikes();
+          console.log(likedProperties,"1111111111111111111")
           setFavorites(likedProperties || []); // Ensure favorites is an array
           console.log("Fetched liked properties:", likedProperties);
         } catch (error) {
@@ -90,27 +93,26 @@ function Home() {
 
   // Handle favorite toggle
   const toggleFavorite = async (propertyId) => {
-    if (!email) {
-      alert("Please log in to access likes.");
-      navigate("/login");
-      return;
-    }
-
-    const isLiked = favorites?.includes(propertyId);
     try {
+      const isLiked = favorites.includes(propertyId);
+  
       if (isLiked) {
+        // Send a DELETE request to remove the like
         await axios.delete(`https://add-bot-server.vercel.app/api/user/dislikes/${propertyId}`, {
           data: { email },
         });
         setFavorites((prev) => prev.filter((id) => id !== propertyId));
       } else {
+        // Send a POST request to add the like
         await axios.post(`https://add-bot-server.vercel.app/api/user/likes/${propertyId}`, { email });
         setFavorites((prev) => [...prev, propertyId]);
       }
     } catch (error) {
-      console.error("Error toggling favorite status:", error);
+      console.error("Error toggling favorite status:", error.message || error);
+      alert("Failed to update favorite status. Please try again.");
     }
   };
+  
 
   if (isLoading) return <p className="text-gray-600 text-center">Loading properties...</p>;
   if (error) return <p className="text-red-500 text-center">Error fetching properties.</p>;
@@ -140,8 +142,8 @@ function Home() {
               <div
                 key={property.id}
                 className="flex flex-col bg-gray-50 border rounded-md shadow cursor-pointer relative"
-                onClick={() => navigate(`/card/${property.id}`)}
-              >
+                onClick={() => navigate(`/card/${property.id}`, { state: { card: property } })}
+                >
                 <img
                   src={property.images?.[0] || "https://via.placeholder.com/300x200?text=No+Image"}
                   alt="Property"
