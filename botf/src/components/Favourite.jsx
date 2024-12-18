@@ -7,7 +7,8 @@ function Favourite() {
   const [favorites, setFavorites] = useState([]); // Track favorite properties
   const [allProperties, setAllProperties] = useState([]); // Track all properties
   const navigate = useNavigate(); // Navigation hook
-  const email = localStorage.getItem("email"); // Get user email from localStorage
+  const email = localStorage.getItem("teleNumber");  
+  // const email = "123456";
 
   useEffect(() => {
     const fetchAllProperties = async () => {
