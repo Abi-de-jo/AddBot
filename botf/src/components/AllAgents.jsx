@@ -14,7 +14,7 @@ function AllAgents() {
         const users = await getAllUsers();
 console.log(users)
         // Filter users who have "geomap" in their email
-        const geomapUsers = users.filter((user) => user.teleNumber?.includes("geomap"));
+        const geomapUsers = users.filter((user) => user.email?.includes("geomap"));
 
         setAgents(geomapUsers); // Set filtered users
       } catch (err) {
